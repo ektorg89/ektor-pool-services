@@ -104,15 +104,15 @@ mysql -u root -p < 02_seed.sql
 - **Documentation:** OpenAPI (Swagger UI)
 
 ### Key Features
-- ✅ RESTful API with 25+ endpoints
-- ✅ JWT authentication & authorization
-- ✅ Role-based access control (admin/staff)
-- ✅ Business rule validation
-- ✅ Automated testing (80%+ coverage)
-- ✅ CI/CD pipeline
-- ✅ Structured error responses
-- ✅ Request tracing (request_id)
-- ✅ Docker-ready deployment
+-  RESTful API with 25+ endpoints
+-  JWT authentication & authorization
+-  Role-based access control (admin/staff)
+-  Business rule validation
+-  Automated testing (80%+ coverage)
+-  CI/CD pipeline
+-  Structured error responses
+-  Request tracing (request_id)
+-  Docker-ready deployment
 
 ---
 

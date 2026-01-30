@@ -121,8 +121,6 @@ mysql -u root -p < 02_seed.sql
 - [Database Schema](./database/README.md) - ERD and table definitions
 - [API v1 Guide](./backend-v1/README.md) - Basic implementation
 - [API v2 Guide](./backend-v2/README.md) - Production version
-- [Architecture Decisions](./docs/architecture.md) - Design choices
-- [Deployment Guide](./docs/deployment.md) - How to deploy
 
 ---
 

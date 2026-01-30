@@ -203,11 +203,11 @@ This is a personal portfolio project, but feedback is welcome!
 
 ## Contact
 
-**Ektor M. Gonzalez**  
+**Ektor M. Gonzalez Ramos**  
 Rincon, Puerto Rico  
-[LinkedIn](https://www.linkedin.com/in/ektorgonzalez)  
-[GitHub](https://github.com/ektorg89)  
-ekgo7167@gmail.com
+[![LinkedIn](https://img.shields.io/badge/-LinkedIn-0077B5?style=flat&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/ektorgonzalez)
+[![GitHub](https://img.shields.io/badge/-GitHub-181717?style=flat&logo=github&logoColor=white)](https://github.com/ektorg89)
+[![Email](https://img.shields.io/badge/-Email-D14836?style=flat&logo=gmail&logoColor=white)](mailto:ekgo7167@gmail.com)
 ---
 
 ## License

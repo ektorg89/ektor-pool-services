@@ -207,7 +207,7 @@ This is a personal portfolio project, but feedback is welcome!
 
 **Ektor M. Gonzalez**  
 Rincon, Puerto Rico  
-[LinkedIn](www.linkedin.com/in/ektorgonzalez)  
+[LinkedIn](https://www.linkedin.com/in/ektorgonzalez)  
 [GitHub](https://github.com/ektorg89)  
 ekgo7167@gmail.com
 ---

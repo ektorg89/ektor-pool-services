@@ -4,6 +4,7 @@ from datetime import date
 from typing import Optional
 
 from fastapi import FastAPI, Depends, Query, HTTPException, Path
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 
@@ -25,6 +26,17 @@ from app.core.logging import configure_logging
 
 configure_logging()
 app = FastAPI(title="Ektor Pool Services API")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5173",   
+        "http://localhost:3000",  
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 register_request_id_middleware(app)
 register_exception_handlers(app)

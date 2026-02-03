@@ -118,3 +118,28 @@ def create_invoice(payload: InvoiceCreate, db: Session = Depends(get_db)):
     except IntegrityError:
         db.rollback()
         raise HTTPException(status_code=409, detail="Database constraint violation")
+
+@router.patch(
+    "/{invoice_id}/status",
+    response_model=InvoiceOut,
+    operation_id="v1_invoices_update_status",
+    dependencies=[Depends(require_roles("admin"))],
+)
+def update_invoice_status(
+    invoice_id: int = Path(..., ge=1, description="Invoice ID (>= 1)"),
+    status: str = Query(..., pattern="^(draft|sent|paid|void)$", description="New status"),
+    db: Session = Depends(get_db),
+):
+    invoice = db.query(Invoice).filter(Invoice.invoice_id == invoice_id).first()
+    if invoice is None:
+        raise HTTPException(status_code=404, detail="Invoice not found")
+    
+    invoice.status = status
+    
+    try:
+        db.commit()
+        db.refresh(invoice)
+        return invoice
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(status_code=409, detail="Database constraint violation")

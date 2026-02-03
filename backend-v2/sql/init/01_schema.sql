@@ -1,4 +1,4 @@
-USE pool_db;
+USE pool_services_db;
 
 CREATE TABLE users (
   user_id         BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,

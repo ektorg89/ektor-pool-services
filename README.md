@@ -1,236 +1,297 @@
-# Ektor Pool Services - Complete Business Management System
+# Ektor Pool Services - Full-Stack Management System
 
-> Real-world pool maintenance business software built iteratively over 6 months.
-> From database design to production-ready REST API with authentication, testing, and CI/CD.
+<div align="center">
+  <img src="frontend/public/logo.png" alt="Ektor Pool Services Logo" width="200"/>
+  
+  **Complete pool maintenance business management application**
+  
+  [![Tech Stack](https://img.shields.io/badge/Python-3.12+-blue)](https://www.python.org/)
+  [![FastAPI](https://img.shields.io/badge/FastAPI-0.109-green)](https://fastapi.tiangolo.com/)
+  [![React](https://img.shields.io/badge/React-18-61dafb)](https://reactjs.org/)
+  [![MySQL](https://img.shields.io/badge/MySQL-8.0-orange)](https://www.mysql.com/)
+  [![Docker](https://img.shields.io/badge/Docker-Ready-blue)](https://www.docker.com/)
+</div>
 
-![Tech Stack](https://img.shields.io/badge/Python-3.12+-blue)
-![FastAPI](https://img.shields.io/badge/FastAPI-0.109-green)
-![MySQL](https://img.shields.io/badge/MySQL-8.0-orange)
-![Docker](https://img.shields.io/badge/Docker-Ready-blue)
+---
 
 ## Overview
 
-This project demonstrates full-stack backend development skills through a real business application:
-managing customers, properties, service visits, invoicing, and payments for a pool maintenance company.
+A professional full-stack web application for managing a pool maintenance business. Built from the ground up with modern technologies, this system handles customer management, property tracking, invoicing, and payment processing.
 
 **Live Demo:** [Coming Soon]  
-**API Documentation:** [Coming Soon]
+**Portfolio Project:** Built as a comprehensive demonstration of full-stack development skills for internship applications.
 
 ---
 
-## Project Evolution
+## Features
 
-### Phase 1: Database Design (November 2024)
-**Location:** [`/database`](./database)
+### Backend (FastAPI + MySQL)
+- [x] RESTful API with 25+ endpoints
+- [x] JWT authentication with role-based access control (RBAC)
+- [x] Complete CRUD operations for all entities
+- [x] Business logic validation and error handling
+- [x] Automated testing with pytest (85% coverage)
+- [x] Docker containerization with health checks
+- [x] OpenAPI/Swagger documentation
 
-- Designed normalized MySQL schema (3NF)
-- 10+ interconnected tables
-- Business rules enforcement via constraints
-- Sample data and query examples
-
-**Key Learning:** Relational database design, normalization, indexing strategies
-
----
-
-### Phase 2: REST API v1 (December 2024)
-**Location:** [`/backend-v1`](./backend-v1)
-
-- Basic CRUD operations for customers, properties, invoices
-- FastAPI + SQLAlchemy ORM
-- Business rule validations
-- Docker containerization
-
-**Key Learning:** REST API design, ORM patterns, request validation
-
----
-
-### Phase 3: Production Backend v2 (January 2025)
-**Location:** [`/backend-v2`](./backend-v2)
-
-- JWT authentication (OAuth2 password flow)
-- Role-based access control (RBAC)
-- Comprehensive test suite (pytest)
-- CI/CD pipeline (GitHub Actions)
-- Structured error handling
-- API documentation (OpenAPI/Swagger)
-
-**Key Learning:** Security, testing, DevOps practices, production-ready code
+### Frontend (React + Vite + Tailwind CSS)
+- [x] Modern, responsive UI with professional design
+- [x] JWT-based authentication with protected routes
+- [x] Real-time dashboard with live statistics
+- [x] Complete CRUD interfaces for:
+  - Customer management
+  - Property management
+  - Invoice creation and tracking
+  - Status management (draft → sent → paid → void)
+- [x] Advanced filtering and search capabilities
+- [x] Form validation and error handling
+- [x] Loading states and user feedback
 
 ---
 
-### Phase 4: Frontend Application (In Progress)
-**Location:** [`/frontend`](./frontend)
+## Tech Stack
 
-Coming soon: React dashboard for business operations
+### Backend
+- **Framework:** FastAPI 0.109
+- **Database:** MySQL 8.0
+- **ORM:** SQLAlchemy 2.0
+- **Authentication:** JWT (OAuth2 + Bearer tokens)
+- **Testing:** pytest, coverage
+- **API Documentation:** OpenAPI (Swagger UI)
+
+### Frontend
+- **Framework:** React 18
+- **Build Tool:** Vite 5
+- **Styling:** Tailwind CSS 3
+- **Routing:** React Router 6
+- **HTTP Client:** Axios
+- **State Management:** React Context API
+
+### DevOps
+- **Containerization:** Docker, Docker Compose
+- **CI/CD:** GitHub Actions (planned)
+- **Database Versioning:** SQL migration scripts
 
 ---
 
 ## Quick Start
 
 ### Prerequisites
-- Docker & Docker Compose
-- Python 3.12+ (for local development)
-- MySQL 8.0+ (or use Docker)
+- Docker Desktop installed and running
+- Node.js 18+ (for local frontend development)
+- Git
 
-### Run Latest Version (Backend v2)
+### Installation
+
+1. **Clone the repository**
 ```bash
-cd backend-v2
-docker compose up -d --build
-
-# Run tests
-docker compose exec api pytest -v
-
-# Access API docs
-open http://localhost:8000/docs
+   git clone https://github.com/ektorg89/ektor-pool-services.git
+   cd ektor-pool-services
 ```
 
-### Database Setup (Standalone)
+2. **Start the backend with Docker**
 ```bash
-cd database
-mysql -u root -p < 01_schema.sql
-mysql -u root -p < 02_seed.sql
+   cd backend-v2
+   docker compose up -d
 ```
+   
+   The API will be available at: `http://localhost:8000`  
+   API Documentation: `http://localhost:8000/docs`
+
+3. **Start the frontend**
+```bash
+   cd ../frontend
+   npm install
+   npm run dev
+```
+   
+   The app will be available at: `http://localhost:5173`
+
+4. **Login with default credentials**
+   - Username: `admin`
+   - Password: `admin123`
+   
+   Or create a new account at: `http://localhost:8000/docs` → POST `/api/v1/auth/register`
 
 ---
 
-## Architecture
+## Screenshots
 
-### Current Tech Stack
-- **Backend:** Python 3.12, FastAPI, SQLAlchemy 2.0
-- **Database:** MySQL 8.0
-- **Auth:** JWT (OAuth2 + Bearer tokens)
-- **Testing:** pytest, coverage
-- **DevOps:** Docker, Docker Compose, GitHub Actions
-- **Documentation:** OpenAPI (Swagger UI)
+### Dashboard
+*Real-time statistics and quick actions*
 
-### Key Features
--  RESTful API with 25+ endpoints
--  JWT authentication & authorization
--  Role-based access control (admin/staff)
--  Business rule validation
--  Automated testing (80%+ coverage)
--  CI/CD pipeline
--  Structured error responses
--  Request tracing (request_id)
--  Docker-ready deployment
+### Customer Management
+*Complete CRUD operations with professional UI*
+
+### Invoice Management
+*Create invoices, track status, and manage payments*
 
 ---
 
-## Documentation
+## Database Schema
 
-- [Database Schema](./database/README.md) - ERD and table definitions
-- [API v1 Guide](./backend-v1/README.md) - Basic implementation
-- [API v2 Guide](./backend-v2/README.md) - Production version
+The system uses a normalized MySQL database with the following core tables:
 
----
+- **users** - Authentication and authorization
+- **customers** - Customer information
+- **properties** - Customer properties (many-to-one with customers)
+- **invoices** - Invoice tracking with status lifecycle
+- **payments** - Payment history linked to invoices
 
-## Testing
-```bash
-# Run all tests
-cd backend-v2
-pytest -v
-
-# With coverage
-pytest --cov=app --cov-report=html
-
-# Integration tests only
-pytest tests/test_integration.py
-```
+Full schema: [`/backend-v2/sql/init/01_schema.sql`](backend-v2/sql/init/01_schema.sql)
 
 ---
 
 ## Authentication Flow
 
-1. Register: `POST /api/v1/auth/register`
-2. Login: `POST /api/v1/auth/token` (returns JWT)
-3. Use token: `Authorization: Bearer <token>`
-
-Default roles:
-- **admin** - Full access
-- **staff** - Read access + limited writes
+1. User registers via `/api/v1/auth/register`
+2. Login via `/api/v1/auth/token` returns JWT access token
+3. Frontend stores token in localStorage
+4. Token automatically included in all API requests via Axios interceptor
+5. Backend validates JWT on protected endpoints
+6. Role-based permissions enforced (admin vs staff)
 
 ---
 
-## Business Context
+## API Endpoints
 
-This project models real operational workflows from my pool maintenance business:
+### Authentication
+```
+POST   /api/v1/auth/register     Create new user
+POST   /api/v1/auth/token        Login (returns JWT)
+GET    /api/v1/auth/me           Get current user info
+```
 
-- Customer & property management
-- Recurring service visits
-- Weekly invoicing with line items
-- Payment tracking & reconciliation
-- Customer financial statements
+### Customers
+```
+GET    /api/v1/customers         List all customers
+POST   /api/v1/customers         Create customer (admin only)
+GET    /api/v1/customers/{id}    Get customer details
+PATCH  /api/v1/customers/{id}    Update customer (admin only)
+DELETE /api/v1/customers/{id}    Delete customer (admin only)
+```
 
-**Why this matters:** Understanding business requirements drives better software design.
+### Properties
+```
+GET    /api/v1/properties        List properties (filter by customer_id)
+POST   /api/v1/properties        Create property (admin only)
+GET    /api/v1/properties/{id}   Get property details
+PATCH  /api/v1/properties/{id}   Update property (admin only)
+DELETE /api/v1/properties/{id}   Delete property (admin only)
+```
+
+### Invoices
+```
+GET    /api/v1/invoices          List invoices (filter by status, customer, dates)
+POST   /api/v1/invoices          Create invoice (admin only)
+GET    /api/v1/invoices/{id}     Get invoice details
+PATCH  /api/v1/invoices/{id}/status  Update invoice status (admin only)
+```
+
+Full API documentation available at: `http://localhost:8000/docs`
+
+---
+
+## Testing
+```bash
+cd backend-v2
+
+# Run all tests
+docker compose exec api pytest -v
+
+# Run with coverage report
+docker compose exec api pytest --cov=app --cov-report=html
+
+# View coverage report
+open htmlcov/index.html
+```
+
+---
+
+## Project Structure
+```
+ektor-pool-services/
+├── backend-v2/              # FastAPI backend
+│   ├── app/
+│   │   ├── api/            # API routes
+│   │   ├── core/           # Auth, security, config
+│   │   ├── db/             # Database session
+│   │   ├── models/         # SQLAlchemy models
+│   │   ├── schemas/        # Pydantic schemas
+│   │   └── tests/          # pytest test suite
+│   ├── sql/
+│   │   └── init/           # Database initialization scripts
+│   ├── docker-compose.yml
+│   ├── Dockerfile
+│   └── requirements.txt
+├── frontend/                # React frontend
+│   ├── src/
+│   │   ├── components/     # Reusable components
+│   │   ├── context/        # React Context (Auth)
+│   │   ├── pages/          # Page components
+│   │   ├── services/       # API service layer
+│   │   └── utils/          # Utilities
+│   ├── public/             # Static assets
+│   └── package.json
+└── database/                # Initial database design docs
+```
 
 ---
 
 ## Roadmap
 
-- [x] Database design
-- [x] Basic REST API
-- [x] Authentication & RBAC
-- [x] Automated testing
-- [x] CI/CD pipeline
-- [ ] Frontend dashboard
-- [ ] Deploy to cloud (AWS/Railway)
-- [ ] Mobile app (React Native)
-- [ ] Analytics & reporting
-
----
-
-## Project Stats
-
-- **Lines of Code:** ~5,000+
-- **Test Coverage:** 85%
-- **API Endpoints:** 25+
-- **Database Tables:** 10
-- **Docker Services:** 2 (API + MySQL)
-- **Development Time:** 3 months
+- [x] Database design and normalization
+- [x] Backend REST API with authentication
+- [x] Frontend application with React
+- [x] Customer management module
+- [x] Property management module
+- [x] Invoice management module
+- [ ] Payment processing module
+- [ ] Reports and analytics
+- [ ] Email notifications
+- [ ] Cloud deployment (AWS/Railway)
+- [ ] Mobile responsive improvements
 
 ---
 
 ## Contributing
 
-This is a personal portfolio project, but feedback is welcome!
+This is a personal portfolio project, but feedback and suggestions are welcome! 
 
 1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Submit a pull request
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
 ---
 
 ## Contact
 
-**Ektor M. Gonzalez Ramos**  
-Rincon, Puerto Rico  
-[![LinkedIn](https://img.shields.io/badge/-LinkedIn-0077B5?style=flat&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/ektorgonzalez)
-[![GitHub](https://img.shields.io/badge/-GitHub-181717?style=flat&logo=github&logoColor=white)](https://github.com/ektorg89)
-[![Email](https://img.shields.io/badge/-Email-D14836?style=flat&logo=gmail&logoColor=white)](mailto:ekgo7167@gmail.com)
+**Ektor M. González**  
+Computer Science & Network Technology Student  
+Universidad Interamericana de Puerto Rico
+
+- Email: ekgo7167@gmail.com
+- LinkedIn: [linkedin.com/in/ektorgonzalez](https://www.linkedin.com/in/ektorgonzalez)
+- GitHub: [@ektorg89](https://github.com/ektorg89)
+
 ---
 
 ## License
 
-This project is open source and available under the MIT License.
+This project is open source and available under the [MIT License](LICENSE).
 
 ---
 
 ## Acknowledgments
 
-Built with real-world business requirements from operating a pool maintenance service in Puerto Rico.
-
-Special thanks to the FastAPI and Python communities for excellent documentation and support.
-
----
-
-## Show Your Support
-
-If you found this project helpful or interesting, please consider giving it a star!
+- Built with real-world business requirements from operating a pool maintenance service
+- Special thanks to the FastAPI, React, and open-source communities
+- Developed as a comprehensive portfolio project for software engineering internship applications
 
 ---
 
-**Note:** This is version 3.0 of this project. Previous iterations are archived:
-- [eps-data-model](https://github.com/ektorg89/eps-data-model) - Database design v1
-- [eps-api-legacy](https://github.com/ektorg89/eps-api-legacy) - REST API v1
-- [eps-core-api](https://github.com/ektorg89/eps-core-api) - Production backend v2
+<div align="center">
+  <strong>⭐ If you found this project helpful or interesting, please consider giving it a star!</strong>
+</div>

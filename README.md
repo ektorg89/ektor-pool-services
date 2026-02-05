@@ -117,6 +117,46 @@ A professional full-stack web application for managing a pool maintenance busine
 
 ## Screenshots
 
+### Login Page
+Modern authentication interface with test credentials displayed
+
+![Login Page](screenshots/login.png)
+
+### Dashboard
+Real-time statistics and system overview
+
+![Dashboard](screenshots/dashboard.png)
+
+### Customer Management
+Complete CRUD operations with professional table interface
+
+![Customers List](screenshots/customers-list.png)
+
+### Customer Form
+Clean modal form for adding and editing customers
+
+![Customer Form](screenshots/customer-form.png)
+
+### Property Management
+Manage customer properties with filtering capabilities
+
+![Properties List](screenshots/properties-list.png)
+
+### Property Form
+Comprehensive property details with address management
+
+![Property Form](screenshots/property-form.png)
+
+### Invoice Management
+Track invoices with advanced filtering by status, customer, and property
+
+![Invoices List](screenshots/invoices-list.png)
+
+### Invoice Details
+Detailed invoice view with status management controls
+
+![Invoice Details](screenshots/invoice-details.png)
+
 ### Dashboard
 *Real-time statistics and quick actions*
 

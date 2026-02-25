@@ -23,6 +23,26 @@ A professional full-stack web application for managing a pool maintenance busine
 
 ---
 
+##  Deployment Status
+
+### Current: AWS EC2 (Development)
+- **Status**:  Functional (Paused for Future Development)
+- **Environment**: Development/Testing
+- **Infrastructure**: Docker containerized on AWS EC2 t3.micro
+- **Access**: http://100.53.186.246:8000/docs
+
+**Tech Stack:**
+- AWS EC2 (t3.micro, Free Tier)
+- Docker & Docker Compose
+- FastAPI (Python 3.11)
+- MySQL 8.0 (containerized)
+
+**Next Phase:** CI/CD automation with GitHub Actions
+
+ [View detailed deployment guide](./deployment/aws-ec2/README.md)
+
+---
+
 ## Features
 
 ### Backend (FastAPI + MySQL)

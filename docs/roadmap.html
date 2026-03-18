@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ektor Pool Services — Project Roadmap</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #0f1117;
+      color: #e2e8f0;
+      min-height: 100vh;
+      padding: 40px 20px 80px;
+    }
+
+    .page {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    /* ── Header ── */
+    header {
+      text-align: center;
+      margin-bottom: 56px;
+    }
+    header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #f8fafc;
+      letter-spacing: -0.5px;
+    }
+    header p {
+      margin-top: 8px;
+      color: #94a3b8;
+      font-size: 0.95rem;
+    }
+    .author {
+      margin-top: 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 999px;
+      padding: 6px 16px;
+      font-size: 0.85rem;
+      color: #cbd5e1;
+    }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: #38bdf8; }
+
+    /* ── Legend ── */
+    .legend {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      margin-bottom: 48px;
+      flex-wrap: wrap;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 0.82rem;
+      color: #94a3b8;
+    }
+    .badge {
+      width: 10px; height: 10px; border-radius: 50%;
+    }
+    .badge.done   { background: #22c55e; }
+    .badge.active { background: #f59e0b; }
+    .badge.next   { background: #3b82f6; }
+    .badge.later  { background: #475569; }
+
+    /* ── Phase blocks ── */
+    .phase {
+      margin-bottom: 32px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid #1e293b;
+    }
+
+    .phase-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 20px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .phase-header:hover { filter: brightness(1.08); }
+
+    .phase-number {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .phase-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      flex: 1;
+    }
+    .phase-status {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 999px;
+    }
+    .chevron {
+      font-size: 0.75rem;
+      transition: transform 0.2s;
+      color: #64748b;
+    }
+    .phase.open .chevron { transform: rotate(90deg); }
+
+    .phase-body {
+      display: none;
+      padding: 0 20px 20px;
+      background: #0f1117;
+      border-top: 1px solid #1e293b;
+    }
+    .phase.open .phase-body { display: block; }
+
+    .item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid #1e293b;
+    }
+    .item:last-child { border-bottom: none; }
+
+    .item-icon {
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.65rem;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .item-text { flex: 1; }
+    .item-text strong {
+      display: block;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #f1f5f9;
+    }
+    .item-text span {
+      font-size: 0.78rem;
+      color: #64748b;
+      margin-top: 2px;
+      display: block;
+    }
+    .tag {
+      font-size: 0.7rem;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-weight: 500;
+      margin-top: 4px;
+      display: inline-block;
+    }
+
+    /* ── Status color themes ── */
+    /* DONE */
+    .phase.done .phase-header  { background: #052e16; }
+    .phase.done .phase-number  { background: #166534; color: #bbf7d0; }
+    .phase.done .phase-title   { color: #bbf7d0; }
+    .phase.done .phase-status  { background: #14532d; color: #4ade80; }
+    .done-icon { background: #166534; color: #4ade80; }
+
+    /* ACTIVE */
+    .phase.active .phase-header { background: #1c1400; }
+    .phase.active .phase-number { background: #78350f; color: #fde68a; }
+    .phase.active .phase-title  { color: #fde68a; }
+    .phase.active .phase-status { background: #451a03; color: #fb923c; }
+    .active-icon { background: #78350f; color: #fbbf24; }
+
+    /* NEXT */
+    .phase.next .phase-header { background: #0c1a2e; }
+    .phase.next .phase-number { background: #1e3a5f; color: #93c5fd; }
+    .phase.next .phase-title  { color: #93c5fd; }
+    .phase.next .phase-status { background: #172554; color: #60a5fa; }
+    .next-icon { background: #1e3a5f; color: #60a5fa; }
+
+    /* LATER */
+    .phase.later .phase-header { background: #0d1117; }
+    .phase.later .phase-number { background: #1e293b; color: #64748b; }
+    .phase.later .phase-title  { color: #64748b; }
+    .phase.later .phase-status { background: #1e293b; color: #475569; }
+    .later-icon { background: #1e293b; color: #475569; }
+
+    /* Tags */
+    .tag-devops   { background: #1e3a5f; color: #60a5fa; }
+    .tag-backend  { background: #1a2e1f; color: #4ade80; }
+    .tag-frontend { background: #2d1b69; color: #a78bfa; }
+    .tag-ai       { background: #2d1432; color: #e879f9; }
+    .tag-security { background: #3b1111; color: #f87171; }
+    .tag-infra    { background: #1c1400; color: #fb923c; }
+
+    /* ── Progress bar ── */
+    .progress-section {
+      margin-bottom: 48px;
+      background: #1e293b;
+      border-radius: 12px;
+      padding: 24px;
+    }
+    .progress-section h3 {
+      font-size: 0.85rem;
+      color: #94a3b8;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .progress-bar-wrap {
+      background: #0f1117;
+      border-radius: 999px;
+      height: 10px;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #22c55e, #38bdf8);
+    }
+    .progress-stats {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      color: #64748b;
+    }
+    .progress-stats span { color: #f1f5f9; font-weight: 600; }
+
+    /* ── Stack pills ── */
+    .stack-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 48px;
+    }
+    .stack-pill {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 999px;
+      padding: 4px 12px;
+      font-size: 0.78rem;
+      color: #cbd5e1;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 64px;
+      color: #334155;
+      font-size: 0.78rem;
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <header>
+    <h1>Ektor Pool Services</h1>
+    <p>Full-stack DevOps portfolio project — complete progress map</p>
+    <div class="author">
+      <div class="dot"></div>
+      Ektor M. González · Universidad Interamericana de Puerto Rico · Target: DevOps Internship
+    </div>
+  </header>
+
+  <!-- Legend -->
+  <div class="legend">
+    <div class="legend-item"><div class="badge done"></div> Completed</div>
+    <div class="legend-item"><div class="badge active"></div> In progress</div>
+    <div class="legend-item"><div class="badge next"></div> Next up</div>
+    <div class="legend-item"><div class="badge later"></div> Later</div>
+  </div>
+
+  <!-- Progress -->
+  <div class="progress-section">
+    <h3>Overall progress</h3>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" style="width: 52%"></div>
+    </div>
+    <div class="progress-stats">
+      <div><span>52%</span> complete</div>
+      <div><span>5</span> phases done · <span>2</span> active · <span>3</span> remaining</div>
+    </div>
+  </div>
+
+  <!-- Stack -->
+  <div class="stack-row">
+    <div class="stack-pill">FastAPI 0.109</div>
+    <div class="stack-pill">Python 3.11</div>
+    <div class="stack-pill">MySQL 8.0</div>
+    <div class="stack-pill">SQLAlchemy 2.0</div>
+    <div class="stack-pill">React 18</div>
+    <div class="stack-pill">Vite 5</div>
+    <div class="stack-pill">Tailwind CSS 3</div>
+    <div class="stack-pill">Docker</div>
+    <div class="stack-pill">GitHub Actions</div>
+    <div class="stack-pill">AWS EC2</div>
+    <div class="stack-pill">Claude API</div>
+    <div class="stack-pill">pytest</div>
+    <div class="stack-pill">JWT / RBAC</div>
+  </div>
+
+  <!-- PHASE 0 -->
+  <div class="phase done open">
+    <div class="phase-header" onclick="toggle(this)">
+      <div class="phase-number">0</div>
+      <div class="phase-title">Foundation</div>
+      <div class="phase-status">Completed</div>
+      <div class="chevron">▶</div>
+    </div>
+    <div class="phase-body">
+      <div class="item">
+        <div class="item-icon done-icon">✓</div>
+        <div class="item-text">
+          <strong>Database schema design</strong>
+          <span>MySQL 8.0 — users, customers, properties, invoices, payments</span>
+          <span class="tag tag-backend">backend</span>
+        </div>
+      </div>
+      <div class="item">
+        <div class="item-icon done-icon">✓</div>
+        <div class="item-text">
+          <strong>backend-v1 — initial REST API</strong>
+          <span>First working version, kept as historical reference</span>
+          <span class="tag tag-backend">backend</span>
+        </div>
+      </div>
+      <div class="item">
+        <div class="item-icon done-icon">✓</div>
+        <div class="item-text">
+          <strong>backend-v2 — FastAPI + SQLAlchemy 2.0 refactor</strong>
+          <span>Active backend. Cleaner structure, Pydantic schemas, typed models</span>
+          <span class="tag tag-backend">backend</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHASE 1 -->
+  <div class="phase done open">
+    <div class="phase-header" onclick="toggle(this)">
+      <div class="phase-number">1</div>
+      <div class="phase-title">Core API Features</div>
+      <div class="phase-status">Completed</div>
+      <div class="chevron">▶</div>
+    </div>
+    <div class="phase-body">
+      <div class="item">
+        <div class="item-icon done-icon">✓</div>
+        <div class="item-text">
+          <strong>JWT Authentication + RBAC</strong>
+          <span>OAuth2 Bearer tokens, admin/staff roles, protected endpoints</span>
+          <span class="tag tag-backend">backend</span>
+        </div>
+      </div>
+      <div class="item">
+        <div class="item-icon done-icon">✓</div>
+        <div class="item-text">
+          <strong>Customers CRUD</strong>
+          <span>GET / POST / PATCH / PUT / DELETE — with RBAC guards</span>
+          <span class="tag tag-backend">backend</span>
+        </div>
+      </div>
+      <div class="item">
+        <div class="item-icon done-icon">✓</div>
+        <div class="item-text">
+          <strong>Properties CRUD</strong>
+          <span>Linked to customers via FK, filtering by customer_id</span>
+          <span class="tag tag-backend">backend</span>
+        </div>
+      </div>
+      <div class="item">
+        <div class="item-icon done-icon">✓</div>
+        <div class="item-text">
+          <strong>Invoices CRUD + status lifecycle</strong>
+          <span>draft → sent → paid → void with business validation</span>
+          <span class="tag tag-backend">backend</span>
+        </div>
+      </div>
+      <div class="item">
+        <div class="item-icon done-icon">✓</div>
+        <div class="item-text">
+          <strong>Payments module</strong>
+          <span>Linked to invoices, auto-marks invoice as paid on full payment</span>
+          <span class="tag tag-backend">backend</span>
+        </div>
+      </div>
+      <div class="item">
+        <div class="item-icon done-icon">✓</div>
+        <div class="item-text">
+          <strong>pytest suite — ~85% coverage</strong>
+          <span>conftest.py with MySQL fixtures, transaction rollback per test</span>
+          <span class="tag tag-backend">backend</span>
+        </div>
+      </div>
+      <div class="item">
+        <div class="item-icon done-icon">✓</div>
+        <div class="item-text">
+          <strong>OpenAPI / Swagger docs</strong>
+          <span>Auto-generated at /docs — all endpoints documented</span>
+          <span class="tag tag-backend">backend</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHASE 2 -->
+  <div class="phase done open">
+    <div class="phase-header" onclick="toggle(this)">
+      <div class="phase-number">2</div>
+      <div class="phase-title">React Frontend</div>
+      <div class="phase-status">Completed</div>
+      <div class="chevron">▶</div>
+    </div>
+    <div class="phase-body">
+      <div class="item">
+        <div class="item-icon done-icon">✓</div>
+        <div class="item-text">
+          <strong>React 18 + Vite 5 + Tailwind CSS 3</strong>
+          <span>Modern build setup, utility-first styling</span>
+          <span class="tag tag-frontend">frontend</span>
+        </div>
+      </div>
+      <div class="item">
+        <div class="item-icon done-icon">✓</div>
+        <div class="item-text">
+          <strong>Auth flow + Protected Routes</strong>
+          <span>JWT stored in localStorage, Axios interceptor, AuthContext</span>
+          <span class="tag tag-frontend">frontend</span>
+        </div>
+      </div>
+      <div class="item">
+        <div class="item-icon done-icon">✓</div>
+        <div class="item-text">
+          <strong>Dashboard with live statistics</strong>
+          <span>Real-time counts — customers, properties, pending invoices</span>
+          <span class="tag tag-frontend">frontend</span>
+        </div>
+      </div>
+      <div class="item">
+        <div class="item-icon done-icon">✓</div>
+        <div class="item-text">
+          <strong>All CRUD interfaces</strong>
+          <span>Customers, Properties, Invoices — modals, tables, forms, delete confirmations</span>
+          <span class="tag tag-frontend">frontend</span>
+        </div>
+      </div>
+      <div class="item">
+        <div class="item-icon done-icon">✓</div>
+        <div class="item-text">
+          <strong>Service layer</strong>
+          <span>customerService, invoiceService, propertyService — all use shared Axios instance</span>
+          <span class="tag tag-frontend">frontend</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHASE 3 -->
+  <div class="phase done open">
+    <div class="phase-header" onclick="toggle(this)">
+      <div class="phase-number">3</div>
+      <div class="phase-title">Infrastructure</div>
+      <div class="phase-status">Completed</div>
+      <div class="chevron">▶</div>
+    </div>
+    <div class="phase-body">
+      <div class="item">
+        <div class="item-icon done-icon">✓</div>
+        <div class="item-text">
+          <strong>Docker + Docker Compose</strong>
+          <span>API + MySQL as services, health checks, volume persistence</span>
+          <span class="tag tag-devops">devops</span>
+        </div>
+      </div>
+      <div class="item">
+        <div class="item-icon done-icon">✓</div>
+        <div class="item-text">
+          <strong>AWS EC2 deploy (t3.micro)</strong>
+          <span>Ubuntu 24.04, Docker on EC2, manual SSH deploy — paused</span>
+          <span class="tag tag-devops">devops</span>
+        </div>
+      </div>
+      <div class="item">
+        <div class="item-icon done-icon">✓</div>
+        <div class="item-text">
+          <strong>Git version control + GitHub</strong>
+          <span>Repo: ektorg89/ektor-pool-services — structured commits</span>
+          <span class="tag tag-devops">devops</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHASE 4 -->
+  <div class="phase done open">
+    <div class="phase-header" onclick="toggle(this)">
+      <div class="phase-number">4</div>
+      <div class="phase-title">DevOps Automation — CI/CD</div>
+      <div class="phase-status">Completed</div>
+      <div class="chevron">▶</div>
+    </div>
+    <div class="phase-body">
+      <div class="item">
+        <div class="item-icon done-icon">✓</div>
+        <div class="item-text">
+          <strong>.gitignore + .env.example</strong>
+          <span>Secrets never committed — .env.example as safe reference</span>
+          <span class="tag tag-security">security</span>
+        </div>
+      </div>
+      <div class="item">
+        <div class="item-icon done-icon">✓</div>
+        <div class="item-text">
+          <strong>CLAUDE.md — Claude Code context file</strong>
+          <span>Stack, commands, coding style guide, DevOps roadmap for AI-assisted dev</span>
+          <span class="tag tag-devops">devops</span>
+        </div>
+      </div>
+      <div class="item">
+        <div class="item-icon done-icon">✓</div>
+        <div class="item-text">
+          <strong>GitHub Actions — .github/workflows/ci.yml</strong>
+          <span>Job 1: pytest with MySQL service · Job 2: React build · Job 3: SSH deploy to EC2</span>
+          <span class="tag tag-devops">devops</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHASE 5 -->
+  <div class="phase active open">
+    <div class="phase-header" onclick="toggle(this)">
+      <div class="phase-number">5</div>
+      <div class="phase-title">AI Layer + MLOps</div>
+      <div class="phase-status">In progress</div>
+      <div class="chevron">▶</div>
+    </div>
+    <div class="phase-body">
+      <div class="item">
+        <div class="item-icon done-icon">✓</div>
+        <div class="item-text">
+          <strong>insights.py — /api/v1/insights/dashboard</strong>
+          <span>DB queries → BusinessMetrics · Claude API → natural language narrative · graceful fallback</span>
+          <span class="tag tag-ai">AI</span>
+          <span class="tag tag-backend">backend</span>
+        </div>
+      </div>
+      <div class="item">
+        <div class="item-icon done-icon">✓</div>
+        <div class="item-text">
+          <strong>scripts/analyze.py — MLOps analysis script</strong>
+          <span>Overdue detection, at-risk clients, inactive customers · JSON + Markdown reports · exit(1) on critical alerts</span>
+          <span class="tag tag-ai">AI</span>
+          <span class="tag tag-devops">devops</span>
+        </div>
+      </div>
+      <div class="item">
+        <div class="item-icon active-icon">→</div>
+        <div class="item-text">
+          <strong>Wire insights panel into Dashboard.jsx</strong>
+          <span>Call /insights/dashboard from React · display narrative + metrics · loading/error states</span>
+          <span class="tag tag-frontend">frontend</span>
+          <span class="tag tag-ai">AI</span>
+        </div>
+      </div>
+      <div class="item">
+        <div class="item-icon active-icon">→</div>
+        <div class="item-text">
+          <strong>.github/workflows/mlops.yml</strong>
+          <span>Scheduled GitHub Actions job that runs analyze.py · saves report as artifact</span>
+          <span class="tag tag-devops">devops</span>
+          <span class="tag tag-ai">AI</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHASE 6 -->
+  <div class="phase active open">
+    <div class="phase-header" onclick="toggle(this)">
+      <div class="phase-number">6</div>
+      <div class="phase-title">Tooling + Developer Experience</div>
+      <div class="phase-status">In progress</div>
+      <div class="chevron">▶</div>
+    </div>
+    <div class="phase-body">
+      <div class="item">
+        <div class="item-icon done-icon">✓</div>
+        <div class="item-text">
+          <strong>LinkedIn log — docs/linkedin-log.md</strong>
+          <span>Post #1 ready (CI/CD) · Post #2 drafted (AI layer) · template for future posts</span>
+          <span class="tag tag-devops">devops</span>
+        </div>
+      </div>
+      <div class="item">
+        <div class="item-icon active-icon">→</div>
+        <div class="item-text">
+          <strong>GitHub MCP Server</strong>
+          <span>Install + configure in Claude Code on macOS — prompt ready to execute</span>
+          <span class="tag tag-devops">devops</span>
+        </div>
+      </div>
+      <div class="item">
+        <div class="item-icon next-icon">○</div>
+        <div class="item-text">
+          <strong>Claude Code Hooks</strong>
+          <span>Pre-commit: run pytest automatically · post-edit: linter on .py files</span>
+          <span class="tag tag-devops">devops</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHASE 7 -->
+  <div class="phase next open">
+    <div class="phase-header" onclick="toggle(this)">
+      <div class="phase-number">7</div>
+      <div class="phase-title">Security Hardening</div>
+      <div class="phase-status">Next</div>
+      <div class="chevron">▶</div>
+    </div>
+    <div class="phase-body">
+      <div class="item">
+        <div class="item-icon next-icon">○</div>
+        <div class="item-text">
+          <strong>Fix hardcoded credentials in deployment README</strong>
+          <span>MySQL password exposed in deployment/aws-ec2/README.md — redact + rotate</span>
+          <span class="tag tag-security">security</span>
+        </div>
+      </div>
+      <div class="item">
+        <div class="item-icon next-icon">○</div>
+        <div class="item-text">
+          <strong>Configure GitHub Secrets for CD</strong>
+          <span>EC2_HOST · EC2_USER · EC2_SSH_KEY · ANTHROPIC_API_KEY</span>
+          <span class="tag tag-security">security</span>
+          <span class="tag tag-devops">devops</span>
+        </div>
+      </div>
+      <div class="item">
+        <div class="item-icon next-icon">○</div>
+        <div class="item-text">
+          <strong>Secrets management strategy</strong>
+          <span>AWS Secrets Manager or Parameter Store for production — no .env on server</span>
+          <span class="tag tag-security">security</span>
+          <span class="tag tag-infra">infra</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHASE 8 -->
+  <div class="phase later">
+    <div class="phase-header" onclick="toggle(this)">
+      <div class="phase-number">8</div>
+      <div class="phase-title">Monitoring + Observability</div>
+      <div class="phase-status">Later</div>
+      <div class="chevron">▶</div>
+    </div>
+    <div class="phase-body">
+      <div class="item">
+        <div class="item-icon later-icon">○</div>
+        <div class="item-text">
+          <strong>Structured logging</strong>
+          <span>JSON logs from FastAPI — queryable, machine-readable</span>
+          <span class="tag tag-backend">backend</span>
+        </div>
+      </div>
+      <div class="item">
+        <div class="item-icon later-icon">○</div>
+        <div class="item-text">
+          <strong>Health check endpoints</strong>
+          <span>Deep health check — DB connectivity, API status, uptime</span>
+          <span class="tag tag-devops">devops</span>
+        </div>
+      </div>
+      <div class="item">
+        <div class="item-icon later-icon">○</div>
+        <div class="item-text">
+          <strong>Prometheus + Grafana</strong>
+          <span>Metrics scraping from FastAPI · dashboard with request rates, errors, latency</span>
+          <span class="tag tag-devops">devops</span>
+          <span class="tag tag-infra">infra</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHASE 9 -->
+  <div class="phase later">
+    <div class="phase-header" onclick="toggle(this)">
+      <div class="phase-number">9</div>
+      <div class="phase-title">Infrastructure as Code</div>
+      <div class="phase-status">Later</div>
+      <div class="chevron">▶</div>
+    </div>
+    <div class="phase-body">
+      <div class="item">
+        <div class="item-icon later-icon">○</div>
+        <div class="item-text">
+          <strong>Nginx reverse proxy + HTTPS</strong>
+          <span>Sit in front of FastAPI · SSL via Let's Encrypt</span>
+          <span class="tag tag-infra">infra</span>
+        </div>
+      </div>
+      <div class="item">
+        <div class="item-icon later-icon">○</div>
+        <div class="item-text">
+          <strong>Terraform or AWS CDK</strong>
+          <span>Define EC2, VPC, Security Groups, RDS as code — reproducible environments</span>
+          <span class="tag tag-infra">infra</span>
+          <span class="tag tag-devops">devops</span>
+        </div>
+      </div>
+      <div class="item">
+        <div class="item-icon later-icon">○</div>
+        <div class="item-text">
+          <strong>Multi-environment setup</strong>
+          <span>dev / staging / prod — separate configs, no cross-contamination</span>
+          <span class="tag tag-infra">infra</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHASE 10 -->
+  <div class="phase later">
+    <div class="phase-header" onclick="toggle(this)">
+      <div class="phase-number">10</div>
+      <div class="phase-title">Scale + Kubernetes</div>
+      <div class="phase-status">Later</div>
+      <div class="chevron">▶</div>
+    </div>
+    <div class="phase-body">
+      <div class="item">
+        <div class="item-icon later-icon">○</div>
+        <div class="item-text">
+          <strong>Kubernetes basics</strong>
+          <span>Pods, Deployments, Services — migrate from Docker Compose to k8s</span>
+          <span class="tag tag-devops">devops</span>
+          <span class="tag tag-infra">infra</span>
+        </div>
+      </div>
+      <div class="item">
+        <div class="item-icon later-icon">○</div>
+        <div class="item-text">
+          <strong>Custom domain + CDN</strong>
+          <span>Route 53 or Cloudflare DNS · CloudFront for static assets</span>
+          <span class="tag tag-infra">infra</span>
+        </div>
+      </div>
+      <div class="item">
+        <div class="item-icon later-icon">○</div>
+        <div class="item-text">
+          <strong>Automated backups + disaster recovery</strong>
+          <span>RDS snapshots or mysqldump on a schedule — restore tested</span>
+          <span class="tag tag-infra">infra</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    Ektor Pool Services · Ektor M. González · Universidad Interamericana de Puerto Rico
+  </footer>
+
+</div>
+<script>
+  function toggle(header) {
+    header.parentElement.classList.toggle('open');
+  }
+  // Open completed phases by default, close later ones
+  document.querySelectorAll('.phase.later').forEach(p => p.classList.remove('open'));
+</script>
+</body>
+</html>

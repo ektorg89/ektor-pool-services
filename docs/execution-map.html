@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Execution Map — Ektor Pool Services</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #0f1117; color: #e2e8f0;
+      padding: 40px 20px 100px;
+      line-height: 1.6;
+    }
+    .page { max-width: 880px; margin: 0 auto; }
+
+    header { text-align: center; margin-bottom: 48px; }
+    header h1 { font-size: 1.8rem; font-weight: 700; color: #f8fafc; }
+    header p { margin-top: 6px; color: #94a3b8; font-size: 0.9rem; }
+
+    /* Legend */
+    .legend {
+      display: flex; gap: 16px; justify-content: center;
+      margin-bottom: 40px; flex-wrap: wrap;
+    }
+    .legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.78rem; color: #94a3b8; }
+    .legend-dot { width: 10px; height: 10px; border-radius: 3px; }
+    .dot-cc  { background: #22d3ee; }
+    .dot-cw  { background: #a78bfa; }
+    .dot-br  { background: #fb923c; }
+    .dot-mix { background: linear-gradient(135deg, #22d3ee 50%, #a78bfa 50%); }
+
+    /* Step cards */
+    .step {
+      margin-bottom: 20px;
+      border-radius: 10px;
+      border: 1px solid #1e293b;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+    .step:hover { border-color: #334155; }
+
+    .step-header {
+      display: flex; align-items: center; gap: 14px;
+      padding: 16px 20px;
+      cursor: pointer; user-select: none;
+      background: #161b22;
+    }
+    .step-num {
+      width: 32px; height: 32px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.8rem; font-weight: 700; flex-shrink: 0;
+      background: #1e293b; color: #94a3b8;
+    }
+    .step-info { flex: 1; }
+    .step-title { font-size: 0.95rem; font-weight: 600; color: #f1f5f9; }
+    .step-sub { font-size: 0.78rem; color: #64748b; margin-top: 2px; }
+
+    .where-tag {
+      font-size: 0.68rem; font-weight: 600; letter-spacing: 0.3px;
+      padding: 3px 9px; border-radius: 999px; text-transform: uppercase; flex-shrink: 0;
+    }
+    .where-cc  { background: #083344; color: #22d3ee; }
+    .where-cw  { background: #2e1065; color: #a78bfa; }
+    .where-br  { background: #431407; color: #fb923c; }
+    .where-mix { background: #1a1a2e; color: #c4b5fd; }
+
+    .chevron { font-size: 0.7rem; color: #475569; transition: transform 0.2s; }
+    .step.open .chevron { transform: rotate(90deg); }
+
+    .step-body { display: none; padding: 0 20px 20px; background: #0f1117; border-top: 1px solid #1e293b; }
+    .step.open .step-body { display: block; }
+
+    /* Sections inside step */
+    .section-label {
+      font-size: 0.72rem; font-weight: 600; color: #64748b;
+      text-transform: uppercase; letter-spacing: 0.5px;
+      margin-top: 18px; margin-bottom: 8px;
+    }
+    .section-label:first-child { margin-top: 16px; }
+
+    .tool-list { display: flex; flex-wrap: wrap; gap: 6px; }
+    .tool-pill {
+      font-size: 0.72rem; padding: 3px 10px; border-radius: 999px;
+      font-weight: 500;
+    }
+    .pill-mcp     { background: #1a2e1f; color: #4ade80; }
+    .pill-hook    { background: #2d1b69; color: #a78bfa; }
+    .pill-sdk     { background: #1e3a5f; color: #60a5fa; }
+    .pill-cmd     { background: #3b1111; color: #f87171; }
+    .pill-agent   { background: #1c1400; color: #fb923c; }
+    .pill-secret  { background: #2d1432; color: #e879f9; }
+    .pill-file    { background: #1e293b; color: #94a3b8; }
+
+    .dep-text { font-size: 0.82rem; color: #94a3b8; }
+    .outcome-text { font-size: 0.82rem; color: #cbd5e1; }
+
+    /* Prompt block */
+    .prompt-wrap {
+      position: relative;
+      margin-top: 8px;
+      background: #161b22;
+      border: 1px solid #1e293b;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .prompt-code {
+      display: block;
+      padding: 14px 16px;
+      font-family: "SF Mono", "Fira Code", monospace;
+      font-size: 0.78rem;
+      line-height: 1.55;
+      color: #e2e8f0;
+      white-space: pre-wrap;
+      word-break: break-word;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    .copy-btn {
+      position: absolute; top: 8px; right: 8px;
+      background: #334155; color: #e2e8f0;
+      border: none; border-radius: 6px;
+      padding: 4px 10px; font-size: 0.7rem;
+      cursor: pointer; font-weight: 600;
+    }
+    .copy-btn:hover { background: #475569; }
+
+    .note {
+      margin-top: 10px; padding: 10px 14px;
+      background: #1c1400; border-left: 3px solid #f59e0b;
+      border-radius: 0 6px 6px 0;
+      font-size: 0.8rem; color: #fde68a;
+    }
+
+    footer {
+      text-align: center; margin-top: 64px;
+      color: #334155; font-size: 0.75rem;
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <h1>Execution Map</h1>
+    <p>Every step from here to production — with the exact prompt, tool, and workspace for each one.</p>
+  </header>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot dot-cc"></div> Claude Code (VS Code)</div>
+    <div class="legend-item"><div class="legend-dot dot-cw"></div> Cowork (Desktop)</div>
+    <div class="legend-item"><div class="legend-dot dot-br"></div> Browser (GitHub / AWS)</div>
+    <div class="legend-item"><div class="legend-dot dot-mix"></div> Mixed</div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- STEP 1 -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="step open">
+    <div class="step-header" onclick="toggle(this)">
+      <div class="step-num">1</div>
+      <div class="step-info">
+        <div class="step-title">Install and configure GitHub MCP Server</div>
+        <div class="step-sub">Connects Claude Code directly to your GitHub repo</div>
+      </div>
+      <div class="where-tag where-cc">Claude Code</div>
+      <div class="chevron">&#9654;</div>
+    </div>
+    <div class="step-body">
+
+      <div class="section-label">Tools</div>
+      <div class="tool-list">
+        <span class="tool-pill pill-mcp">MCP: github-mcp-server</span>
+        <span class="tool-pill pill-secret">GitHub Personal Access Token</span>
+      </div>
+
+      <div class="section-label">Dependencies</div>
+      <div class="dep-text">None — this is step zero.</div>
+
+      <div class="section-label">Prompt — paste into Claude Code</div>
+      <div class="prompt-wrap">
+        <button class="copy-btn" onclick="copyPrompt(this)">Copy</button>
+        <code class="prompt-code">Read the CLAUDE.md in the project root before starting.
+
+I want to install and configure the GitHub MCP Server in Claude Code on macOS.
+
+My context:
+- GitHub username: ektorg89
+- Repository: ektor-pool-services
+- OS: macOS
+- Editor: VS Code with Claude Code
+- I already have GitHub Actions configured in .github/workflows/ci.yml
+
+What I want to be able to do from Claude Code once configured:
+- Check the status of my GitHub Actions runs
+- Create and view issues without leaving the terminal
+- Review PRs and commit history
+- Interact with my repo directly from Claude Code
+
+Walk me through these steps one at a time:
+1. What a GitHub Personal Access Token is, what permissions I need
+   and exactly why each permission is required
+2. How to create the token on GitHub (step by step)
+3. How to install the GitHub MCP Server on macOS
+4. How to register it in Claude Code
+5. How to verify it is working with a test command against my repo
+
+Rules:
+- Explain each step before asking me to run anything
+- Do not skip steps assuming I already know something
+- If a command could have side effects, warn me first
+- After setup, show me 3 practical commands I can use
+  immediately with my project</code>
+      </div>
+
+      <div class="section-label">Expected outcome</div>
+      <div class="outcome-text">GitHub MCP active in Claude Code. You can run commands like "show me the last 5 GitHub Actions runs" or "create an issue titled X" without leaving VS Code.</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- STEP 2 -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="step">
+    <div class="step-header" onclick="toggle(this)">
+      <div class="step-num">2</div>
+      <div class="step-info">
+        <div class="step-title">Configure GitHub Secrets for CI/CD</div>
+        <div class="step-sub">Unblocks the deploy job and AI endpoint in production</div>
+      </div>
+      <div class="where-tag where-br">Browser + Claude Code</div>
+      <div class="chevron">&#9654;</div>
+    </div>
+    <div class="step-body">
+
+      <div class="section-label">Tools</div>
+      <div class="tool-list">
+        <span class="tool-pill pill-mcp">MCP: github-mcp-server</span>
+        <span class="tool-pill pill-secret">EC2_HOST</span>
+        <span class="tool-pill pill-secret">EC2_USER</span>
+        <span class="tool-pill pill-secret">EC2_SSH_KEY</span>
+        <span class="tool-pill pill-secret">ANTHROPIC_API_KEY</span>
+      </div>
+
+      <div class="section-label">Dependencies</div>
+      <div class="dep-text">Step 1 (GitHub MCP installed).</div>
+
+      <div class="section-label">Prompt — paste into Claude Code</div>
+      <div class="prompt-wrap">
+        <button class="copy-btn" onclick="copyPrompt(this)">Copy</button>
+        <code class="prompt-code">I need to configure 4 GitHub Secrets for my CI/CD pipeline.
+The workflow is in .github/workflows/ci.yml — the deploy job
+needs these secrets to SSH into my EC2 instance.
+
+The secrets I need:
+1. EC2_HOST — the public IP of my AWS EC2 instance
+2. EC2_USER — ubuntu
+3. EC2_SSH_KEY — the full contents of my .pem private key file
+4. ANTHROPIC_API_KEY — my Claude API key for the insights endpoint
+
+Walk me through how to add each one in GitHub:
+- Where to go in the GitHub settings
+- What each field means (Name vs Secret)
+- How to paste a multi-line SSH key correctly
+- How to verify they're set up without exposing them
+
+After setup, tell me how to trigger a test run of the
+CI/CD pipeline to confirm the deploy job picks them up.</code>
+      </div>
+
+      <div class="section-label">Expected outcome</div>
+      <div class="outcome-text">4 secrets configured in GitHub. Next push to main triggers the full CI/CD pipeline including the deploy job to EC2.</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- STEP 3 -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="step">
+    <div class="step-header" onclick="toggle(this)">
+      <div class="step-num">3</div>
+      <div class="step-info">
+        <div class="step-title">Fix hardcoded credentials in deployment README</div>
+        <div class="step-sub">Remove the MySQL password from the committed file</div>
+      </div>
+      <div class="where-tag where-cc">Claude Code</div>
+      <div class="chevron">&#9654;</div>
+    </div>
+    <div class="step-body">
+
+      <div class="section-label">Tools</div>
+      <div class="tool-list">
+        <span class="tool-pill pill-file">deployment/aws-ec2/README.md</span>
+      </div>
+
+      <div class="section-label">Dependencies</div>
+      <div class="dep-text">None — can be done anytime. High priority (security).</div>
+
+      <div class="section-label">Prompt — paste into Claude Code</div>
+      <div class="prompt-wrap">
+        <button class="copy-btn" onclick="copyPrompt(this)">Copy</button>
+        <code class="prompt-code">Open deployment/aws-ec2/README.md.
+
+There is a hardcoded MySQL password on the line that starts with
+"docker-compose exec db mysql". Replace the real password with
+a placeholder like &lt;YOUR_DB_PASSWORD&gt;.
+
+Also check the rest of the file for any other hardcoded
+credentials, IPs, or sensitive values that should be
+replaced with placeholders.
+
+Commit the change with message:
+"fix: redact hardcoded credentials from EC2 deployment guide"</code>
+      </div>
+
+      <div class="note">After this commit, you should also rotate the actual MySQL password on your EC2 instance since the real one is now in git history.</div>
+
+      <div class="section-label">Expected outcome</div>
+      <div class="outcome-text">No real credentials visible in the repo. Deployment README uses safe placeholders.</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- STEP 4 -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="step">
+    <div class="step-header" onclick="toggle(this)">
+      <div class="step-num">4</div>
+      <div class="step-info">
+        <div class="step-title">Wire AI insights panel into Dashboard.jsx</div>
+        <div class="step-sub">Make the AI layer visible in the frontend — completes Phase 5</div>
+      </div>
+      <div class="where-tag where-cc">Claude Code</div>
+      <div class="chevron">&#9654;</div>
+    </div>
+    <div class="step-body">
+
+      <div class="section-label">Tools</div>
+      <div class="tool-list">
+        <span class="tool-pill pill-sdk">Anthropic SDK (backend)</span>
+        <span class="tool-pill pill-file">frontend/src/pages/dashboard/Dashboard.jsx</span>
+        <span class="tool-pill pill-file">frontend/src/services/api.js</span>
+        <span class="tool-pill pill-file">backend-v2/app/api/v1/routers/insights.py</span>
+      </div>
+
+      <div class="section-label">Dependencies</div>
+      <div class="dep-text">Step 2 (ANTHROPIC_API_KEY configured) for the narrative to work. Without the key, the panel still renders with a fallback message.</div>
+
+      <div class="section-label">Prompt — paste into Claude Code</div>
+      <div class="prompt-wrap">
+        <button class="copy-btn" onclick="copyPrompt(this)">Copy</button>
+        <code class="prompt-code">Read the CLAUDE.md — pay close attention to the coding style section.
+
+The backend endpoint GET /api/v1/insights/dashboard already exists
+in backend-v2/app/api/v1/routers/insights.py. It returns:
+{
+  "metrics": { month_revenue, paid_this_month, overdue_count,
+               overdue_amount, at_risk_clients, draft_invoices,
+               total_clients },
+  "narrative": "string (AI-generated or fallback)",
+  "generated_at": "datetime"
+}
+
+I need you to wire this into the existing Dashboard.jsx at
+frontend/src/pages/dashboard/Dashboard.jsx.
+
+Requirements:
+- Add a new section below the 3 stat cards
+- Call GET /api/v1/insights/dashboard on mount
+- Show a loading skeleton while fetching
+- Display the narrative text prominently
+- Show key metrics (overdue count, at-risk clients,
+  draft invoices) as smaller cards or a summary row
+- Handle the error case gracefully (show message, not crash)
+- If narrative says "AI insights unavailable", style it
+  as a subtle info notice, not as an error
+
+Match my existing code patterns exactly:
+- Use my try/catch/finally + setLoading pattern
+- Use the shared api instance from services/api.js
+- Handler and state naming must match my conventions
+- No emoji, no AI-sounding comments
+
+Show me the plan first before writing any code.</code>
+      </div>
+
+      <div class="section-label">Expected outcome</div>
+      <div class="outcome-text">Dashboard shows AI-generated business narrative + key metrics. The "AI layer" is now visible. This is the most impressive thing in the portfolio demo.</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- STEP 5 -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="step">
+    <div class="step-header" onclick="toggle(this)">
+      <div class="step-num">5</div>
+      <div class="step-info">
+        <div class="step-title">Create MLOps workflow — mlops.yml</div>
+        <div class="step-sub">Scheduled GitHub Actions job that runs the analysis script weekly</div>
+      </div>
+      <div class="where-tag where-cc">Claude Code</div>
+      <div class="chevron">&#9654;</div>
+    </div>
+    <div class="step-body">
+
+      <div class="section-label">Tools</div>
+      <div class="tool-list">
+        <span class="tool-pill pill-file">.github/workflows/mlops.yml</span>
+        <span class="tool-pill pill-file">scripts/analyze.py</span>
+        <span class="tool-pill pill-agent">GitHub Actions: schedule (cron)</span>
+        <span class="tool-pill pill-agent">GitHub Actions: upload-artifact</span>
+      </div>
+
+      <div class="section-label">Dependencies</div>
+      <div class="dep-text">Step 2 (GitHub Secrets configured — needs DB access for the script).</div>
+
+      <div class="section-label">Prompt — paste into Claude Code</div>
+      <div class="prompt-wrap">
+        <button class="copy-btn" onclick="copyPrompt(this)">Copy</button>
+        <code class="prompt-code">Read the CLAUDE.md and look at the existing ci.yml workflow.
+
+I have a Python script at scripts/analyze.py that connects
+to MySQL and generates a business analysis report (JSON + Markdown).
+It exits with code 1 if critical alerts are detected.
+
+Create a new workflow at .github/workflows/mlops.yml that:
+1. Runs on a weekly schedule (every Monday at 8am UTC)
+2. Can also be triggered manually (workflow_dispatch)
+3. Spins up a MySQL service (same pattern as ci.yml backend job)
+4. Runs the init SQL scripts to populate the schema
+5. Executes scripts/analyze.py with the right DB env vars
+6. Uploads analysis-report.json and analysis-report.md as artifacts
+7. If the script exits with code 1 (critical alerts),
+   the job fails and GitHub sends me a notification
+
+Use the same style and structure as the existing ci.yml.
+Explain the cron syntax before using it.
+
+Commit with message:
+"ci: add scheduled MLOps analysis workflow"</code>
+      </div>
+
+      <div class="section-label">Expected outcome</div>
+      <div class="outcome-text">Weekly automated business analysis. Reports saved as GitHub Actions artifacts. Notifications on critical alerts. This is real MLOps on your resume.</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- STEP 6 -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="step">
+    <div class="step-header" onclick="toggle(this)">
+      <div class="step-num">6</div>
+      <div class="step-info">
+        <div class="step-title">Set up Claude Code Hooks</div>
+        <div class="step-sub">Automated checks before every commit — pytest + linting</div>
+      </div>
+      <div class="where-tag where-cc">Claude Code</div>
+      <div class="chevron">&#9654;</div>
+    </div>
+    <div class="step-body">
+
+      <div class="section-label">Tools</div>
+      <div class="tool-list">
+        <span class="tool-pill pill-hook">Hook: PreCommit</span>
+        <span class="tool-pill pill-hook">Hook: PostEdit (.py)</span>
+        <span class="tool-pill pill-file">.claude/hooks/</span>
+      </div>
+
+      <div class="section-label">Dependencies</div>
+      <div class="dep-text">Step 1 (Claude Code fully configured).</div>
+
+      <div class="section-label">Prompt — paste into Claude Code</div>
+      <div class="prompt-wrap">
+        <button class="copy-btn" onclick="copyPrompt(this)">Copy</button>
+        <code class="prompt-code">I want to set up Claude Code Hooks for this project.
+Read the CLAUDE.md for context.
+
+I need two hooks:
+
+1. Pre-commit hook: before any commit, run
+   "docker compose exec api pytest -q" from backend-v2/.
+   If tests fail, block the commit and show me the failures.
+
+2. Post-edit hook for .py files: after editing any Python file
+   in backend-v2/, run a quick syntax check or linter pass.
+
+Explain:
+- What Claude Code Hooks are and how they differ from git hooks
+- Where the hook configuration lives
+- How to test each hook after setting it up
+- How to temporarily disable a hook if needed
+
+Walk me through the setup step by step.</code>
+      </div>
+
+      <div class="section-label">Expected outcome</div>
+      <div class="outcome-text">Automatic quality gates. Tests run before every commit. Python files get checked on save. Professional DevOps workflow.</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- STEP 7 -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="step">
+    <div class="step-header" onclick="toggle(this)">
+      <div class="step-num">7</div>
+      <div class="step-info">
+        <div class="step-title">Create custom Claude Code commands</div>
+        <div class="step-sub">Slash commands like /deploy, /test, /analyze for fast workflows</div>
+      </div>
+      <div class="where-tag where-cc">Claude Code</div>
+      <div class="chevron">&#9654;</div>
+    </div>
+    <div class="step-body">
+
+      <div class="section-label">Tools</div>
+      <div class="tool-list">
+        <span class="tool-pill pill-cmd">Command: /test</span>
+        <span class="tool-pill pill-cmd">Command: /deploy</span>
+        <span class="tool-pill pill-cmd">Command: /analyze</span>
+        <span class="tool-pill pill-cmd">Command: /status</span>
+        <span class="tool-pill pill-file">.claude/commands/</span>
+      </div>
+
+      <div class="section-label">Dependencies</div>
+      <div class="dep-text">Steps 1 and 6 (GitHub MCP + Hooks configured).</div>
+
+      <div class="section-label">Prompt — paste into Claude Code</div>
+      <div class="prompt-wrap">
+        <button class="copy-btn" onclick="copyPrompt(this)">Copy</button>
+        <code class="prompt-code">I want to create custom slash commands for Claude Code.
+Read the CLAUDE.md for project context.
+
+Create these commands in .claude/commands/:
+
+1. /test — runs the full pytest suite inside the Docker
+   container and shows results with coverage summary
+
+2. /deploy — shows the current CI/CD status using the GitHub
+   MCP, then asks if I want to trigger a manual deploy
+
+3. /analyze — runs scripts/analyze.py locally and displays
+   the markdown report inline
+
+4. /status — shows a quick summary: git status, last commit,
+   latest GitHub Actions run status, Docker container health
+
+For each command, explain:
+- What file to create and where
+- The markdown format Claude Code expects
+- How to test it immediately after creation</code>
+      </div>
+
+      <div class="section-label">Expected outcome</div>
+      <div class="outcome-text">Type /test, /deploy, /analyze, or /status in Claude Code and get instant results. Fast developer experience that impresses in demos.</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- STEP 8 -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="step">
+    <div class="step-header" onclick="toggle(this)">
+      <div class="step-num">8</div>
+      <div class="step-info">
+        <div class="step-title">Secrets management — AWS Secrets Manager</div>
+        <div class="step-sub">Move from .env files to proper cloud-based secrets</div>
+      </div>
+      <div class="where-tag where-mix">Cowork + Claude Code</div>
+      <div class="chevron">&#9654;</div>
+    </div>
+    <div class="step-body">
+
+      <div class="section-label">Tools</div>
+      <div class="tool-list">
+        <span class="tool-pill pill-mcp">MCP: AWS (when installed)</span>
+        <span class="tool-pill pill-sdk">boto3 (AWS SDK for Python)</span>
+        <span class="tool-pill pill-secret">AWS Secrets Manager</span>
+      </div>
+
+      <div class="section-label">Dependencies</div>
+      <div class="dep-text">Steps 1-5 complete. EC2 deploy working.</div>
+
+      <div class="section-label">Phase A — Plan in Cowork</div>
+      <div class="prompt-wrap">
+        <button class="copy-btn" onclick="copyPrompt(this)">Copy</button>
+        <code class="prompt-code">My project uses a .env file in backend-v2/ with real credentials
+(DB password, JWT secret, Anthropic API key). This works for local
+development but is not production-ready.
+
+I want to move to proper secrets management. My infrastructure:
+- AWS EC2 t3.micro running Docker
+- GitHub Actions CI/CD pipeline
+- FastAPI backend reads env vars via os.getenv()
+
+Explain my options:
+1. AWS Secrets Manager
+2. AWS Systems Manager Parameter Store
+3. Docker secrets
+
+For each option, tell me: cost, complexity, and whether it
+works with my current setup (FastAPI + Docker + EC2).
+Help me choose the right one for a student on Free Tier.</code>
+      </div>
+
+      <div class="section-label">Phase B — Implement in Claude Code</div>
+      <div class="prompt-wrap">
+        <button class="copy-btn" onclick="copyPrompt(this)">Copy</button>
+        <code class="prompt-code">Read CLAUDE.md for context.
+
+Based on the secrets management strategy we planned in Cowork,
+I want to implement it now.
+
+Walk me through:
+1. Setting up the secrets in AWS (using the CLI or console)
+2. Modifying backend-v2/app/db/session.py to read secrets
+   from the chosen service instead of .env
+3. Updating the Dockerfile if needed
+4. Updating the GitHub Actions workflow to pass secrets correctly
+5. Testing that it works locally AND in production
+
+Explain each step before writing code. Keep my coding style.</code>
+      </div>
+
+      <div class="section-label">Expected outcome</div>
+      <div class="outcome-text">No more plaintext .env on the server. Secrets stored and rotated in AWS. Production-grade security.</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- STEP 9 -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="step">
+    <div class="step-header" onclick="toggle(this)">
+      <div class="step-num">9</div>
+      <div class="step-info">
+        <div class="step-title">Monitoring — structured logging + health checks</div>
+        <div class="step-sub">Observability foundation before adding Prometheus/Grafana</div>
+      </div>
+      <div class="where-tag where-mix">Cowork + Claude Code</div>
+      <div class="chevron">&#9654;</div>
+    </div>
+    <div class="step-body">
+
+      <div class="section-label">Tools</div>
+      <div class="tool-list">
+        <span class="tool-pill pill-sdk">Python: structlog or json-logging</span>
+        <span class="tool-pill pill-sdk">Prometheus client (later)</span>
+        <span class="tool-pill pill-sdk">Grafana (later)</span>
+        <span class="tool-pill pill-file">backend-v2/app/core/logging.py</span>
+      </div>
+
+      <div class="section-label">Dependencies</div>
+      <div class="dep-text">Steps 1-5 complete. App stable and deployed.</div>
+
+      <div class="section-label">Phase A — Plan in Cowork</div>
+      <div class="prompt-wrap">
+        <button class="copy-btn" onclick="copyPrompt(this)">Copy</button>
+        <code class="prompt-code">I want to add monitoring to my FastAPI project.
+Current state: basic Python logging in backend-v2/app/core/logging.py.
+Infrastructure: Docker + EC2.
+
+I need a plan for 3 levels of monitoring:
+
+Level 1: Structured JSON logging (do this first)
+- What library to use with FastAPI
+- What fields to include in every log line
+- How to capture request/response metadata
+
+Level 2: Deep health check endpoint
+- Beyond the basic /health — check DB, disk, memory
+- How CI/CD can use this to verify deploys
+
+Level 3: Prometheus + Grafana (later)
+- What metrics to expose from FastAPI
+- How to set up Prometheus scraping in Docker Compose
+- What Grafana dashboards make sense for this app
+
+Give me the roadmap. I will implement Level 1 first.</code>
+      </div>
+
+      <div class="section-label">Phase B — Implement in Claude Code</div>
+      <div class="prompt-wrap">
+        <button class="copy-btn" onclick="copyPrompt(this)">Copy</button>
+        <code class="prompt-code">Read CLAUDE.md for context and coding style.
+
+Implement Level 1 monitoring: structured JSON logging.
+
+Based on the plan from Cowork, I want to:
+1. Replace the current logging setup with structured JSON logs
+2. Add middleware that logs every request with:
+   method, path, status_code, duration_ms, timestamp
+3. Keep it simple — no external services yet
+4. Make sure Docker Compose shows the JSON logs cleanly
+
+Walk me through each change. Match my coding patterns.
+Commit when done with: "feat: add structured JSON logging"</code>
+      </div>
+
+      <div class="section-label">Expected outcome</div>
+      <div class="outcome-text">Every API request generates a structured JSON log. Queryable, parseable, production-grade. Foundation for Prometheus later.</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- STEP 10 -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="step">
+    <div class="step-header" onclick="toggle(this)">
+      <div class="step-num">10</div>
+      <div class="step-info">
+        <div class="step-title">Infrastructure as Code — Terraform</div>
+        <div class="step-sub">Define EC2, VPC, Security Groups as code — reproducible deploys</div>
+      </div>
+      <div class="where-tag where-mix">Cowork + Claude Code</div>
+      <div class="chevron">&#9654;</div>
+    </div>
+    <div class="step-body">
+
+      <div class="section-label">Tools</div>
+      <div class="tool-list">
+        <span class="tool-pill pill-sdk">Terraform CLI</span>
+        <span class="tool-pill pill-mcp">MCP: AWS (if installed)</span>
+        <span class="tool-pill pill-file">infra/ (new directory)</span>
+        <span class="tool-pill pill-agent">GitHub Actions: terraform plan/apply</span>
+      </div>
+
+      <div class="section-label">Dependencies</div>
+      <div class="dep-text">Steps 1-9 complete. App fully deployed and monitored.</div>
+
+      <div class="section-label">Phase A — Plan in Cowork</div>
+      <div class="prompt-wrap">
+        <button class="copy-btn" onclick="copyPrompt(this)">Copy</button>
+        <code class="prompt-code">I want to learn Infrastructure as Code using Terraform.
+Current setup: manual EC2 t3.micro on AWS Free Tier.
+
+Before writing any Terraform, explain:
+1. What Terraform does and why it matters for DevOps
+2. What "state" means and why it is important
+3. How Terraform compares to AWS CDK (which should I learn?)
+4. What resources from my project should be in Terraform:
+   - EC2 instance
+   - Security Group (currently: ektor-pool-sg)
+   - VPC / Subnet (or use default?)
+5. How to set up Terraform for AWS on macOS
+6. Where to store the Terraform files in my project structure
+7. How to integrate terraform plan into GitHub Actions
+
+Help me understand the big picture first.</code>
+      </div>
+
+      <div class="section-label">Phase B — Implement in Claude Code</div>
+      <div class="prompt-wrap">
+        <button class="copy-btn" onclick="copyPrompt(this)">Copy</button>
+        <code class="prompt-code">Read CLAUDE.md for context.
+
+I want to create my first Terraform configuration for this project.
+Start with the minimum:
+1. Provider configuration for AWS (us-east-1)
+2. EC2 instance (t3.micro, Ubuntu 24.04)
+3. Security Group with the same rules I have now
+   (SSH, HTTP, HTTPS, port 8000)
+4. Output the public IP
+
+Create files in infra/ directory.
+Explain every block before writing it.
+Do NOT run terraform apply — just create the files
+and show me how to do a dry run with terraform plan.
+
+Commit with: "infra: add initial Terraform configuration for EC2"</code>
+      </div>
+
+      <div class="section-label">Expected outcome</div>
+      <div class="outcome-text">Full EC2 infrastructure defined as code. One command to create or destroy the environment. This is the core of DevOps.</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- STEP 11 -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="step">
+    <div class="step-header" onclick="toggle(this)">
+      <div class="step-num">11</div>
+      <div class="step-info">
+        <div class="step-title">Kubernetes basics — migrate from Docker Compose</div>
+        <div class="step-sub">Learn pods, deployments, services — the final DevOps milestone</div>
+      </div>
+      <div class="where-tag where-mix">Cowork + Claude Code</div>
+      <div class="chevron">&#9654;</div>
+    </div>
+    <div class="step-body">
+
+      <div class="section-label">Tools</div>
+      <div class="tool-list">
+        <span class="tool-pill pill-sdk">kubectl</span>
+        <span class="tool-pill pill-sdk">minikube or kind (local k8s)</span>
+        <span class="tool-pill pill-file">k8s/ (new directory)</span>
+        <span class="tool-pill pill-agent">Docker Hub or ECR (container registry)</span>
+      </div>
+
+      <div class="section-label">Dependencies</div>
+      <div class="dep-text">Steps 1-10 complete. Terraform and monitoring working.</div>
+
+      <div class="section-label">Phase A — Plan in Cowork</div>
+      <div class="prompt-wrap">
+        <button class="copy-btn" onclick="copyPrompt(this)">Copy</button>
+        <code class="prompt-code">I want to learn Kubernetes basics using my project.
+Current setup: Docker Compose with 2 services (api + mysql).
+
+Before touching anything, explain:
+1. What Kubernetes solves that Docker Compose doesn't
+2. The core concepts I need: Pod, Deployment, Service,
+   ConfigMap, Secret, Namespace
+3. Whether I should use minikube or kind for local dev on macOS
+4. How my docker-compose.yml translates to k8s manifests
+5. A realistic timeline for a student to get this working
+6. Whether EKS (AWS managed k8s) is feasible on Free Tier
+
+I do NOT want to deploy to k8s yet — I want to understand
+the architecture first and run it locally.</code>
+      </div>
+
+      <div class="section-label">Phase B — Implement in Claude Code</div>
+      <div class="prompt-wrap">
+        <button class="copy-btn" onclick="copyPrompt(this)">Copy</button>
+        <code class="prompt-code">Read CLAUDE.md for context.
+
+Create the Kubernetes manifests to run my project locally.
+Structure in k8s/ directory:
+
+1. namespace.yml — dedicated namespace for the app
+2. mysql-deployment.yml — MySQL pod with persistent volume
+3. mysql-service.yml — ClusterIP service for DB access
+4. api-deployment.yml — FastAPI pod (2 replicas)
+5. api-service.yml — LoadBalancer or NodePort to expose the API
+6. configmap.yml — non-sensitive config (DB_HOST, DB_PORT, DB_NAME)
+7. secret.yml — sensitive values (DB_PASSWORD, JWT secret)
+
+Explain each manifest before writing it.
+Show me how to test with minikube after all files are created.
+
+Commit with: "k8s: add Kubernetes manifests for local development"</code>
+      </div>
+
+      <div class="section-label">Expected outcome</div>
+      <div class="outcome-text">Project running on local Kubernetes. You understand pods, deployments, services. This is the final piece for a DevOps internship application.</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- STEP 12 -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="step">
+    <div class="step-header" onclick="toggle(this)">
+      <div class="step-num">12</div>
+      <div class="step-info">
+        <div class="step-title">LinkedIn post — update log and publish progress</div>
+        <div class="step-sub">After each major milestone, document and share</div>
+      </div>
+      <div class="where-tag where-cw">Cowork</div>
+      <div class="chevron">&#9654;</div>
+    </div>
+    <div class="step-body">
+
+      <div class="section-label">Tools</div>
+      <div class="tool-list">
+        <span class="tool-pill pill-file">docs/linkedin-log.md</span>
+      </div>
+
+      <div class="section-label">Dependencies</div>
+      <div class="dep-text">After completing any major step (4, 5, 8, 10, or 11).</div>
+
+      <div class="section-label">Prompt — paste into Cowork</div>
+      <div class="prompt-wrap">
+        <button class="copy-btn" onclick="copyPrompt(this)">Copy</button>
+        <code class="prompt-code">Read docs/linkedin-log.md to see my previous posts and template.
+
+I just completed [DESCRIBE WHAT YOU DID].
+
+Write a new LinkedIn post entry following the template in the log:
+1. What I built (1 line)
+2. Why it matters / what I learned (2-3 bullets)
+3. Next step
+4. Identity: student, DevOps focus, UIPR
+5. Relevant hashtags
+
+Keep the tone professional but authentic — I am a student
+sharing real progress, not a marketing team.
+No emoji. English. Add it as a new entry in the log file.</code>
+      </div>
+
+      <div class="note">Post after each major milestone: AI dashboard (Step 4), MLOps workflow (Step 5), Terraform (Step 10), Kubernetes (Step 11). Consistency matters more than frequency.</div>
+
+      <div class="section-label">Expected outcome</div>
+      <div class="outcome-text">Growing LinkedIn presence documenting your DevOps journey. Recruiters see consistent, real progress over time.</div>
+    </div>
+  </div>
+
+  <footer>
+    Ektor Pool Services — Execution Map<br>
+    Ektor M. González · Universidad Interamericana de Puerto Rico
+  </footer>
+
+</div>
+<script>
+  function toggle(header) {
+    header.parentElement.classList.toggle('open');
+  }
+  function copyPrompt(btn) {
+    const code = btn.parentElement.querySelector('.prompt-code');
+    navigator.clipboard.writeText(code.textContent).then(() => {
+      btn.textContent = 'Copied';
+      setTimeout(() => btn.textContent = 'Copy', 1500);
+    });
+  }
+</script>
+</body>
+</html>

@@ -3,6 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 import customerService from '../../services/customerService';
 import propertyService from '../../services/propertyService';
 import api from '../../services/api';
+import insightService from '../../services/insightService';
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -12,9 +13,12 @@ const Dashboard = () => {
     pendingInvoices: 0,
   });
   const [loading, setLoading] = useState(true);
+  const [insights, setInsights] = useState(null);
+  const [insightsLoading, setInsightsLoading] = useState(true);
 
   useEffect(() => {
     fetchStats();
+    fetchInsights();
   }, []);
 
   const fetchStats = async () => {
@@ -41,6 +45,18 @@ const Dashboard = () => {
       console.error('Failed to fetch stats:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchInsights = async () => {
+    try {
+      setInsightsLoading(true);
+      const data = await insightService.getDashboardInsights();
+      setInsights(data);
+    } catch (error) {
+      console.error('Failed to fetch insights:', error);
+    } finally {
+      setInsightsLoading(false);
     }
   };
 
@@ -110,6 +126,42 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* AI Insights */}
+      <div className="mt-8 bg-white rounded-lg shadow p-6">
+        <h2 className="text-xl font-semibold text-gray-800 mb-4">AI Business Insights</h2>
+        {insightsLoading ? (
+          <div className="space-y-2">
+            <div className="animate-pulse h-4 bg-gray-200 rounded w-full"></div>
+            <div className="animate-pulse h-4 bg-gray-200 rounded w-5/6"></div>
+            <div className="animate-pulse h-4 bg-gray-200 rounded w-4/6"></div>
+          </div>
+        ) : insights ? (
+          <div>
+            <p className="text-gray-700 mb-6">{insights.narrative}</p>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+              <div className="bg-gray-50 rounded p-3">
+                <p className="text-gray-500">Monthly Revenue</p>
+                <p className="font-bold text-gray-800">${Number(insights.metrics.month_revenue).toFixed(2)}</p>
+              </div>
+              <div className="bg-gray-50 rounded p-3">
+                <p className="text-gray-500">Overdue Invoices</p>
+                <p className="font-bold text-red-600">{insights.metrics.overdue_count}</p>
+              </div>
+              <div className="bg-gray-50 rounded p-3">
+                <p className="text-gray-500">Draft Invoices</p>
+                <p className="font-bold text-yellow-600">{insights.metrics.draft_invoices}</p>
+              </div>
+              <div className="bg-gray-50 rounded p-3">
+                <p className="text-gray-500">At-Risk Clients</p>
+                <p className="font-bold text-gray-800">{insights.metrics.at_risk_clients.length}</p>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <p className="text-gray-500 text-sm">Insights unavailable — check that ANTHROPIC_API_KEY is set in your .env file.</p>
+        )}
       </div>
 
       {/* Project Status */}

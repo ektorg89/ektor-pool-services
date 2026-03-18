@@ -104,8 +104,8 @@ def _ensure_customer_and_property(client):
 
 def _ensure_two_customers_with_distinct_properties(client):
     """
-    Necesario para probar 'property no pertenece al customer'.
-    Si no hay suficiente data, crea lo mínimo.
+    Needed to test 'property does not belong to customer'.
+    If there is not enough data, creates the minimum required.
     """
     r_c = client.get("/api/v1/customers")
     assert r_c.status_code == 200

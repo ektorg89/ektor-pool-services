@@ -112,16 +112,19 @@ const Dashboard = () => {
         </div>
       </div>
 
+      {/* Project Status */}
       <div className="mt-8 bg-white rounded-lg shadow p-6">
         <h2 className="text-xl font-semibold text-gray-800 mb-4">Project Status</h2>
         <ul className="space-y-2 text-gray-600">
-          <li> Authentication & Authorization</li>
-          <li> Backend API (FastAPI + MySQL + Docker)</li>
-          <li> Customers Module (Full CRUD)</li>
-          <li> Properties Module (Full CRUD)</li>
-          <li> Dashboard with Real Stats</li>
-          <li>→ Invoices Module (Next)</li>
-          <li>→ Payments Module</li>
+          <li>✓ Authentication & Authorization (JWT + RBAC)</li>
+          <li>✓ Backend API (FastAPI + MySQL + Docker)</li>
+          <li>✓ Customers Module (Full CRUD)</li>
+          <li>✓ Properties Module (Full CRUD)</li>
+          <li>✓ Invoices Module (Full CRUD + Status Management)</li>
+          <li>✓ Dashboard with Real-Time Stats</li>
+          <li>✓ Professional UI with Tailwind CSS</li>
+          <li>→ Payment Processing Module</li>
+          <li>→ Reports & Analytics</li>
           <li>→ Production Deployment</li>
         </ul>
       </div>

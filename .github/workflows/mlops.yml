@@ -1,0 +1,75 @@
+name: MLOps — Weekly Business Analysis
+
+on:
+  schedule:
+    - cron: "0 9 * * 1" # Every Monday at 9:00 AM UTC
+  workflow_dispatch: # Allow manual trigger from GitHub UI
+
+jobs:
+  analyze:
+    name: Business Analysis Report
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # ── Step 1: Copy the analysis script to EC2 ──────────────────────────
+      - name: Upload analysis script to EC2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: "scripts/analyze.py"
+          target: "~/ektor-pool-api/"
+
+      # ── Step 2: Run the script on EC2 (reads .env for DB credentials) ────
+      - name: Run analysis on EC2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            set -e
+            cd ~/ektor-pool-api/backend-v2
+
+            # Load environment variables from .env
+            export $(grep -v '^#' .env | xargs)
+
+            # Install script dependency if not already present
+            pip install pymysql --quiet
+
+            # Run the analysis
+            python ../scripts/analyze.py
+
+      # ── Step 3: Download the generated reports from EC2 ──────────────────
+      - name: Download reports from EC2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: "~/ektor-pool-api/backend-v2/analysis-report.*"
+          target: "./"
+          strip_components: 5 # Remove ~/ektor-pool-api/backend-v2 prefix
+
+      # ── Step 4: Upload reports as GitHub Actions artifacts ───────────────
+      - name: Upload reports as artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: business-analysis-${{ github.run_number }}-${{ github.run_attempt }}
+          path: |
+            analysis-report.json
+            analysis-report.md
+          retention-days: 90
+
+      # ── Step 5: Post summary to GitHub Actions UI ────────────────────────
+      - name: Post summary
+        if: always()
+        run: |
+          if [ -f analysis-report.md ]; then
+            cat analysis-report.md >> $GITHUB_STEP_SUMMARY
+          else
+            echo " Report file not found." >> $GITHUB_STEP_SUMMARY
+          fi

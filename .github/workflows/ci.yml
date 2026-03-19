@@ -127,5 +127,5 @@ jobs:
             set -e
             cd ~/ektor-pool-api/backend-v2
             git pull origin main
-            docker compose up -d --build
+            docker compose up -d
             docker compose ps

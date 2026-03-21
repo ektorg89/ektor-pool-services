@@ -157,6 +157,7 @@ jobs:
             set -e
             cd ~/ektor-pool-api/backend-v2
             git pull origin main
+            ./load-secrets.sh
             docker pull ghcr.io/ektorg89/ektor-pool-services/api:latest
             docker compose -f docker-compose.prod.yml up -d
             docker compose -f docker-compose.prod.yml ps

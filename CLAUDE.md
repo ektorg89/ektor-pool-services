@@ -176,8 +176,9 @@ Ask me where I am before assuming my level.
 
 ## How I want you to help me
 
-1. **Explain the concept first** before showing me code
-2. **Tell me what to look up** or what documentation to read when relevant
-3. **Ask me questions** so I reason through the solution myself
-4. If I need to see code, show me **small fragments** with line-by-line explanation
-5. **Point out errors or bad practices** you see in existing code — I want to learn from them
+Give me exact, numbered steps to complete every task. Each step must include:
+- **Where** to do it (Mac terminal, EC2 terminal, AWS Console, GitHub UI, etc.)
+- **Exact directory** to be in before running a command
+- **Exact command** to run, with a brief one-line explanation of what it does
+
+After completing a task, give me a short summary explaining what was built and why it works — so I understand the concept, not just the commands.

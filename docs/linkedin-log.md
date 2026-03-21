@@ -43,28 +43,58 @@ enfocado en DevOps. Cada commit es un paso más hacia mi primer internship.
 
 ---
 
-## Post #2 — IA en el dashboard (PENDIENTE)
-**Fecha:** Por definir
-**Estado:** Borrador — completar cuando esté implementado
+## Post #2 — AI layer implemented in the dashboard
+**Fecha:** Marzo 2026
+**Estado:** Listo para publicar
 
 ---
 
-🤖 Integré inteligencia artificial en mi proyecto de portafolio
+I added an AI layer to my pool services management app — and it taught me more about system design than I expected.
 
-[Describir qué se construyó]
+Here is what the architecture looks like:
 
-→ Endpoint de análisis en FastAPI que procesa datos reales de la BD
-→ El dashboard ahora genera insights automáticos en lenguaje natural
-→ Detección de anomalías en pagos y comportamiento de clientes
-→ Job en GitHub Actions que corre análisis automatizado semanalmente
+The React dashboard calls a FastAPI endpoint. That endpoint queries MySQL directly using SQLAlchemy — monthly revenue, overdue invoices, at-risk clients, draft invoice counts. Python computes the metrics. Then those metrics get passed to the Claude API, which generates a plain-English narrative summarizing the business state. The dashboard renders the narrative alongside four metric tiles with conditional coloring (overdue in red, drafts in yellow).
 
-Lo interesante no es solo la IA — es cómo se despliega:
-pipeline CI/CD → tests → deploy → modelo en producción.
-Eso es MLOps.
+No hallucinations, no guessing. The LLM only writes prose — every number it mentions came from a real database query.
 
-Stack: FastAPI + React + MySQL + Claude/OpenAI API + GitHub Actions + AWS EC2
+A few design decisions I want to document:
 
-#MLOps #AI #DevOps #FastAPI #Python #StudentDeveloper #Portfolio #PuertoRico
+The endpoint degrades gracefully. If ANTHROPIC_API_KEY is missing, it returns the metrics without the narrative instead of crashing. That matters for CI — the pipeline runs without secrets in the test environment and still passes.
+
+I also added a separate scheduled analysis script (scripts/analyze.py) that runs weekly via GitHub Actions. It connects directly to MySQL, computes the same metrics, writes a JSON + Markdown report, and exits with code 1 if it finds critical alerts — overdue amounts above a threshold, clients inactive for 30+ days. An exit code of 1 makes the GitHub Actions job show as failed, which triggers a notification. That is the MLOps piece: automated monitoring without building a dashboard for the monitoring tool.
+
+The model I used is claude-opus-4-6. There is a comment in the code noting that claude-haiku-4-5 would be significantly cheaper for high-frequency production calls. Making that tradeoff explicit in code is something I picked up from reading about production ML systems.
+
+Full stack: FastAPI + SQLAlchemy + MySQL + Anthropic SDK + React + Tailwind CSS + Docker + GitHub Actions
+
+I am a Technology & Networks student (Minor in Computer Science) at Universidad Interamericana de Puerto Rico, targeting a DevOps internship. This project is my main portfolio piece — every feature I add is something I can explain in an interview at the system level.
+
+#DevOps #MLOps #AI #FastAPI #Python #React #Anthropic #StudentDeveloper #Portfolio #PuertoRico #OpenToWork
+
+---
+
+## Post #3 — Claude Code certification + AI tooling philosophy
+**Fecha:** Marzo 18, 2026
+**Estado:** Listo para publicar
+**Nota:** Attach certificate image when posting
+
+---
+
+I earned Anthropic's Claude Code in Action certificate today.
+
+Here is what that actually looked like on my project:
+
+I used Claude Code (Anthropic's agentic coding CLI) and Cowork (their desktop automation tool) throughout the build of Ektor Pool Services — a full-stack pool maintenance management app I am building as my DevOps portfolio piece. Claude Code helped me scaffold endpoints, run tests, and enforce my own coding style guide. Cowork handled project analysis, documentation, roadmaps, and identifying technical debt across the codebase. When the tools made mistakes — wrong file locations, wrong assumptions — I diagnosed them, understood why, and fixed them. That is intentional. That is the workflow.
+
+My approach to AI in development: these tools exist to optimize processes, accelerate documentation, and compress the feedback loop between learning a concept and having a working implementation to study. Not to skip the learning. Not to do less. The standard I hold myself to is that I can explain every decision at the system level — architecture, tradeoffs, failure modes.
+
+You have to understand the craft before you can direct the tool.
+
+Verify: https://verify.skilljar.com/c/ghti2apufjbf
+
+Technology & Networks student (Minor in Computer Science) at Universidad Interamericana de Puerto Rico. Targeting a DevOps internship.
+
+#ClaudeCode #Anthropic #DevOps #AI #Python #StudentDeveloper #Portfolio #PuertoRico #OpenToWork
 
 ---
 

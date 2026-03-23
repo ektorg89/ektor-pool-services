@@ -50,3 +50,10 @@ docs/_build/
 dist/
 build/
 *.egg-info/
+
+# Terraform
+**/.terraform/
+*.tfstate
+*.tfstate.backup
+*.tfvars
+

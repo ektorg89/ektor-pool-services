@@ -26,6 +26,8 @@ from app.core.logging import configure_logging
 
 configure_logging()
 app = FastAPI(title="Ektor Pool Services API")
+from prometheus_fastapi_instrumentator import Instrumentator
+Instrumentator().instrument(app).expose(app)
 
 app.add_middleware(
     CORSMiddleware,

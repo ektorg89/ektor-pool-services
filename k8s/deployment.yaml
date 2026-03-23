@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pool-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pool-api
+  template:
+    metadata:
+      labels:
+        app: pool-api
+    spec:
+        containers:
+        - name: api
+          image: ghcr.io/ektorg89/ektor-pool-services/api:latest
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - secretRef:
+                name: pool-api-secrets
+

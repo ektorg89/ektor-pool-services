@@ -4,13 +4,14 @@ from datetime import date
 from fastapi import APIRouter, Depends, HTTPException, Path, Query
 from sqlalchemy.orm import Session
 
+from app.api.v1.routers.auth import require_roles
 from app.db.session import get_db
 from app.models.models import Customer, Invoice
 from app.schemas.schemas import CustomerStatementOut, StatementItem
 
 router = APIRouter(prefix="/reports", tags=["reports"])
 
-@router.get("/customers/{customer_id}/statement", response_model=CustomerStatementOut)
+@router.get("/customers/{customer_id}/statement", response_model=CustomerStatementOut, dependencies=[Depends(require_roles("admin", "staff"))])
 def customer_statement(
     customer_id: int = Path(..., ge=1, description="Customer ID (>= 1)"),
     from_: date = Query(..., alias="from", description="Start date (YYYY-MM-DD)"),

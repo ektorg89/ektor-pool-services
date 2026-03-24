@@ -14,6 +14,7 @@ router = APIRouter()
     "",
     response_model=list[CustomerOut],
     operation_id="v1_customers_list",
+    dependencies=[Depends(require_roles("admin", "staff"))],
 )
 def list_customers(db: Session = Depends(get_db)):
     return db.query(Customer).order_by(Customer.customer_id.desc()).limit(50).all()
@@ -46,6 +47,7 @@ def create_customer(payload: CustomerCreate, db: Session = Depends(get_db)):
     "/{customer_id}",
     response_model=CustomerOut,
     operation_id="v1_customers_get",
+    dependencies=[Depends(require_roles("admin", "staff"))],
 )
 def get_customer(
     customer_id: int = Path(..., ge=1, le=9999, description="Customer ID (1-9999)"),

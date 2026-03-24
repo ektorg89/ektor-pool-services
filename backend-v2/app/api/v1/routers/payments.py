@@ -89,6 +89,7 @@ def create_payment(payload: PaymentCreate, db: Session = Depends(get_db)):
     "",
     response_model=list[PaymentOut],
     operation_id="v1_payments_list",
+    dependencies=[Depends(require_roles("admin", "staff"))],
 )
 def list_payments(
     invoice_id: int | None = Query(

@@ -8,6 +8,7 @@ from pydantic import BaseModel, ConfigDict
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
+from app.api.v1.routers.auth import require_roles
 from app.db.session import get_db
 from app.models.models import Customer, Invoice
 
@@ -38,6 +39,7 @@ class InsightOut(BaseModel):
     "/dashboard",
     response_model=InsightOut,
     operation_id="v1_insights_dashboard",
+    dependencies=[Depends(require_roles("admin", "staff"))],
 )
 def get_dashboard_insights(db: Session = Depends(get_db)):
     today = date.today()

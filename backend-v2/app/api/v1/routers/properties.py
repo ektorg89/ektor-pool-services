@@ -16,6 +16,7 @@ router = APIRouter()
     "",
     response_model=list[PropertyOut],
     operation_id="v1_properties_list",
+    dependencies=[Depends(require_roles("admin", "staff"))],
 )
 def list_properties(
     customer_id: Optional[int] = Query(default=None, ge=1),
@@ -71,6 +72,7 @@ def create_property(payload: PropertyCreate, db: Session = Depends(get_db)):
     "/{property_id}",
     response_model=PropertyOut,
     operation_id="v1_properties_get",
+    dependencies=[Depends(require_roles("admin", "staff"))],
 )
 def get_property(
     property_id: int = Path(..., ge=1, description="Property ID (1-100)"),

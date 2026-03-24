@@ -17,6 +17,7 @@ router = APIRouter()
     "",
     response_model=list[InvoiceOut],
     operation_id="v1_invoices_list",
+    dependencies=[Depends(require_roles("admin", "staff"))],
 )
 def list_invoices(
     status: Optional[str] = Query(
@@ -54,6 +55,7 @@ def list_invoices(
     "/{invoice_id}",
     response_model=InvoiceOut,
     operation_id="v1_invoices_get",
+    dependencies=[Depends(require_roles("admin", "staff"))],
 )
 def get_invoice(
     invoice_id: int = Path(..., ge=1, description="Invoice ID (>= 1)"),

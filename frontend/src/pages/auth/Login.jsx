@@ -83,10 +83,6 @@ const Login = () => {
           </button>
         </form>
 
-        <div className="mt-6 text-center text-sm text-gray-600">
-          <p>Test user: <span className="font-mono">admin</span></p>
-          <p>Password: <span className="font-mono">admin123</span></p>
-        </div>
       </div>
     </div>
   );

@@ -23,23 +23,15 @@ A professional full-stack web application for managing a pool maintenance busine
 
 ---
 
-##  Deployment Status
+## Deployment
 
-### Current: AWS EC2 (Development)
-- **Status**:  Functional (Paused for Future Development)
-- **Environment**: Development/Testing
-- **Infrastructure**: Docker containerized on AWS EC2 t3.micro
-- **Access**: http://100.53.186.246:8000/docs
+- **Infrastructure:** AWS EC2 t3.micro (Free Tier)
+- **CI/CD:** GitHub Actions — automated test, build, and deploy on every push to `main`
+- **Containerization:** Docker + Docker Compose
+- **IaC:** Terraform (EC2 provisioning)
+- **Orchestration:** Kubernetes manifests included
 
-**Tech Stack:**
-- AWS EC2 (t3.micro, Free Tier)
-- Docker & Docker Compose
-- FastAPI (Python 3.11)
-- MySQL 8.0 (containerized)
-
-**Next Phase:** CI/CD automation with GitHub Actions
-
- [View detailed deployment guide](./deployment/aws-ec2/README.md)
+[View deployment guide](./deployment/aws-ec2/README.md)
 
 ---
 
@@ -53,11 +45,12 @@ A professional full-stack web application for managing a pool maintenance busine
 - [x] Automated testing with pytest (85% coverage)
 - [x] Docker containerization with health checks
 - [x] OpenAPI/Swagger documentation
+- [x] AI business insights via Claude API
 
 ### Frontend (React + Vite + Tailwind CSS)
 - [x] Modern, responsive UI with professional design
 - [x] JWT-based authentication with protected routes
-- [x] Real-time dashboard with live statistics
+- [x] Real-time dashboard with live statistics and AI insights
 - [x] Complete CRUD interfaces for:
   - Customer management
   - Property management
@@ -89,7 +82,10 @@ A professional full-stack web application for managing a pool maintenance busine
 
 ### DevOps
 - **Containerization:** Docker, Docker Compose
-- **CI/CD:** GitHub Actions (planned)
+- **CI/CD:** GitHub Actions (test → build → deploy to EC2)
+- **IaC:** Terraform (EC2 provisioning)
+- **Orchestration:** Kubernetes manifests
+- **Monitoring:** Prometheus + Grafana
 - **Database Versioning:** SQL migration scripts
 
 ---
@@ -176,15 +172,6 @@ Track invoices with advanced filtering by status, customer, and property
 Detailed invoice view with status management controls
 
 ![Invoice Details](screenshots/invoice-details.png)
-
-### Dashboard
-*Real-time statistics and quick actions*
-
-### Customer Management
-*Complete CRUD operations with professional UI*
-
-### Invoice Management
-*Create invoices, track status, and manage payments*
 
 ---
 
@@ -305,12 +292,15 @@ ektor-pool-services/
 - [x] Frontend application with React
 - [x] Customer management module
 - [x] Property management module
-- [x] Invoice management module
-- [ ] Payment processing module
+- [x] Invoice & payment management module
+- [x] AI business insights (Claude API)
+- [x] CI/CD pipeline (GitHub Actions)
+- [x] Cloud deployment (AWS EC2)
+- [x] Infrastructure as Code (Terraform)
+- [x] Monitoring (Prometheus + Grafana)
 - [ ] Reports and analytics
+- [ ] Payment processing UI
 - [ ] Email notifications
-- [ ] Cloud deployment (AWS/Railway)
-- [ ] Mobile responsive improvements
 
 ---
 

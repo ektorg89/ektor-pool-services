@@ -172,12 +172,13 @@ const Dashboard = () => {
           <li>✓ Backend API (FastAPI + MySQL + Docker)</li>
           <li>✓ Customers Module (Full CRUD)</li>
           <li>✓ Properties Module (Full CRUD)</li>
-          <li>✓ Invoices Module (Full CRUD + Status Management)</li>
-          <li>✓ Dashboard with Real-Time Stats</li>
-          <li>✓ Professional UI with Tailwind CSS</li>
-          <li>→ Payment Processing Module</li>
+          <li>✓ Invoices & Payments Module (Full CRUD + Status Management)</li>
+          <li>✓ Dashboard with Real-Time Stats & AI Insights</li>
+          <li>✓ CI/CD Pipeline (GitHub Actions → EC2)</li>
+          <li>✓ Infrastructure as Code (Terraform + Kubernetes)</li>
+          <li>✓ Monitoring (Prometheus + Grafana)</li>
           <li>→ Reports & Analytics</li>
-          <li>→ Production Deployment</li>
+          <li>→ Payment Processing UI</li>
         </ul>
       </div>
     </div>

@@ -37,6 +37,8 @@ logs/
 .coverage
 htmlcov/
 .pytest_cache/
+test-results/
+playwright-report/
 
 # Docker
 *.pid

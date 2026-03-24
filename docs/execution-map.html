@@ -340,7 +340,7 @@ Commit the change with message:
         <span class="tool-pill pill-sdk">Anthropic SDK (backend)</span>
         <span class="tool-pill pill-file">frontend/src/pages/dashboard/Dashboard.jsx</span>
         <span class="tool-pill pill-file">frontend/src/services/api.js</span>
-        <span class="tool-pill pill-file">backend-v2/app/api/v1/routers/insights.py</span>
+        <span class="tool-pill pill-file">backend/app/api/v1/routers/insights.py</span>
       </div>
 
       <div class="section-label">Dependencies</div>
@@ -352,7 +352,7 @@ Commit the change with message:
         <code class="prompt-code">Read the CLAUDE.md — pay close attention to the coding style section.
 
 The backend endpoint GET /api/v1/insights/dashboard already exists
-in backend-v2/app/api/v1/routers/insights.py. It returns:
+in backend/app/api/v1/routers/insights.py. It returns:
 {
   "metrics": { month_revenue, paid_this_month, overdue_count,
                overdue_amount, at_risk_clients, draft_invoices,
@@ -480,11 +480,11 @@ Read the CLAUDE.md for context.
 I need two hooks:
 
 1. Pre-commit hook: before any commit, run
-   "docker compose exec api pytest -q" from backend-v2/.
+   "docker compose exec api pytest -q" from backend/.
    If tests fail, block the commit and show me the failures.
 
 2. Post-edit hook for .py files: after editing any Python file
-   in backend-v2/, run a quick syntax check or linter pass.
+   in backend/, run a quick syntax check or linter pass.
 
 Explain:
 - What Claude Code Hooks are and how they differ from git hooks
@@ -586,7 +586,7 @@ For each command, explain:
       <div class="section-label">Phase A — Plan in Cowork</div>
       <div class="prompt-wrap">
         <button class="copy-btn" onclick="copyPrompt(this)">Copy</button>
-        <code class="prompt-code">My project uses a .env file in backend-v2/ with real credentials
+        <code class="prompt-code">My project uses a .env file in backend/ with real credentials
 (DB password, JWT secret, Anthropic API key). This works for local
 development but is not production-ready.
 
@@ -615,7 +615,7 @@ I want to implement it now.
 
 Walk me through:
 1. Setting up the secrets in AWS (using the CLI or console)
-2. Modifying backend-v2/app/db/session.py to read secrets
+2. Modifying backend/app/db/session.py to read secrets
    from the chosen service instead of .env
 3. Updating the Dockerfile if needed
 4. Updating the GitHub Actions workflow to pass secrets correctly
@@ -649,7 +649,7 @@ Explain each step before writing code. Keep my coding style.</code>
         <span class="tool-pill pill-sdk">Python: structlog or json-logging</span>
         <span class="tool-pill pill-sdk">Prometheus client (later)</span>
         <span class="tool-pill pill-sdk">Grafana (later)</span>
-        <span class="tool-pill pill-file">backend-v2/app/core/logging.py</span>
+        <span class="tool-pill pill-file">backend/app/core/logging.py</span>
       </div>
 
       <div class="section-label">Dependencies</div>
@@ -659,7 +659,7 @@ Explain each step before writing code. Keep my coding style.</code>
       <div class="prompt-wrap">
         <button class="copy-btn" onclick="copyPrompt(this)">Copy</button>
         <code class="prompt-code">I want to add monitoring to my FastAPI project.
-Current state: basic Python logging in backend-v2/app/core/logging.py.
+Current state: basic Python logging in backend/app/core/logging.py.
 Infrastructure: Docker + EC2.
 
 I need a plan for 3 levels of monitoring:

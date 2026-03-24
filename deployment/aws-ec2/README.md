@@ -42,7 +42,7 @@ Last Updated: February 25, 2026
 ssh -i ~/.ssh/ektor-pool-key.pem ubuntu@100.53.186.246
 
 # Navigate to project
-cd ~/ektor-pool-api/backend-v2
+cd ~/ektor-pool-api/backend
 ```
 
 ### API Access
@@ -56,7 +56,7 @@ cd ~/ektor-pool-api/backend-v2
 
 ### Start Services
 ```bash
-cd ~/ektor-pool-api/backend-v2
+cd ~/ektor-pool-api/backend
 docker-compose start
 ```
 

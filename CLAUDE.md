@@ -21,8 +21,8 @@ Built from scratch as a portfolio project for internship applications.
 
 ## Tech stack
 
-### Backend (`/backend-v2`)
-- **Framework:** FastAPI 0.109 (Python 3.11)
+### Backend (`/backend`)
+- **Framework:** FastAPI 0.128 (Python 3.11)
 - **ORM:** SQLAlchemy 2.0
 - **Database:** MySQL 8.0
 - **Auth:** JWT with OAuth2 Bearer tokens, RBAC (admin / staff)
@@ -47,7 +47,7 @@ Built from scratch as a portfolio project for internship applications.
 
 ### Start the backend
 ```bash
-cd backend-v2
+cd backend
 docker compose up -d          # Start API + MySQL
 docker compose logs -f api    # Watch live logs
 docker compose down           # Stop
@@ -80,8 +80,7 @@ npm run build   # Production build
 
 ```
 ektor-pool-services/
-├── backend-v1/          # Original version (reference only, do not use)
-├── backend-v2/          # Active backend
+├── backend/             # Active backend
 │   ├── app/
 │   │   ├── api/v1/routers/   # Endpoints: auth, customers, properties, invoices, payments, reports, insights
 │   │   ├── core/             # Auth, security, exceptions, logging
@@ -144,7 +143,7 @@ Ask me where I am before assuming my level.
 - **AI layer** — `/api/v1/insights/dashboard` endpoint (Hybrid approach):
   - Python queries MySQL and computes `BusinessMetrics`
   - `_generate_narrative()` calls Claude API (`claude-opus-4-6`) for the narrative
-  - Requires `ANTHROPIC_API_KEY` in `backend-v2/.env`; gracefully degrades if missing
+  - Requires `ANTHROPIC_API_KEY` in `backend/.env`; gracefully degrades if missing
 - MLOps scheduled job — `.github/workflows/mlops.yml` (rule-based, no LLM)
 
 ### Current focus
@@ -161,8 +160,8 @@ Ask me where I am before assuming my level.
 
 ## Important context for Claude
 
-- The `.env` file in `backend-v2/` has real credentials — never commit it
-- `backend-v1/` is the previous version, kept as historical reference
+- The `.env` file in `backend/` has real credentials — never commit it
+- `backend-v1/` has been deleted — git history preserves it if needed
 - The frontend stores JWT in `localStorage` — known security trade-off
 - SQLAlchemy models mix `Column()` (User model) and `Mapped[]` (all others) — known technical debt
 - `relationship()` is not yet explicit in SQLAlchemy models

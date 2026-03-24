@@ -5,9 +5,9 @@
   
   **Complete pool maintenance business management application**
   
-  [![Tech Stack](https://img.shields.io/badge/Python-3.12+-blue)](https://www.python.org/)
-  [![FastAPI](https://img.shields.io/badge/FastAPI-0.109-green)](https://fastapi.tiangolo.com/)
-  [![React](https://img.shields.io/badge/React-18-61dafb)](https://reactjs.org/)
+  [![Tech Stack](https://img.shields.io/badge/Python-3.11+-blue)](https://www.python.org/)
+  [![FastAPI](https://img.shields.io/badge/FastAPI-0.128-green)](https://fastapi.tiangolo.com/)
+  [![React](https://img.shields.io/badge/React-19-61dafb)](https://reactjs.org/)
   [![MySQL](https://img.shields.io/badge/MySQL-8.0-orange)](https://www.mysql.com/)
   [![Docker](https://img.shields.io/badge/Docker-Ready-blue)](https://www.docker.com/)
 </div>
@@ -72,7 +72,7 @@ A professional full-stack web application for managing a pool maintenance busine
 ## Tech Stack
 
 ### Backend
-- **Framework:** FastAPI 0.109
+- **Framework:** FastAPI 0.128
 - **Database:** MySQL 8.0
 - **ORM:** SQLAlchemy 2.0
 - **Authentication:** JWT (OAuth2 + Bearer tokens)
@@ -80,10 +80,10 @@ A professional full-stack web application for managing a pool maintenance busine
 - **API Documentation:** OpenAPI (Swagger UI)
 
 ### Frontend
-- **Framework:** React 18
+- **Framework:** React 19
 - **Build Tool:** Vite 5
 - **Styling:** Tailwind CSS 3
-- **Routing:** React Router 6
+- **Routing:** React Router 7
 - **HTTP Client:** Axios
 - **State Management:** React Context API
 
@@ -111,7 +111,7 @@ A professional full-stack web application for managing a pool maintenance busine
 
 2. **Start the backend with Docker**
 ```bash
-   cd backend-v2
+   cd backend
    docker compose up -d
 ```
    
@@ -198,7 +198,7 @@ The system uses a normalized MySQL database with the following core tables:
 - **invoices** - Invoice tracking with status lifecycle
 - **payments** - Payment history linked to invoices
 
-Full schema: [`/backend-v2/sql/init/01_schema.sql`](backend-v2/sql/init/01_schema.sql)
+Full schema: [`/backend/sql/init/01_schema.sql`](backend/sql/init/01_schema.sql)
 
 ---
 
@@ -254,7 +254,7 @@ Full API documentation available at: `http://localhost:8000/docs`
 
 ## Testing
 ```bash
-cd backend-v2
+cd backend
 
 # Run all tests
 docker compose exec api pytest -v
@@ -271,7 +271,7 @@ open htmlcov/index.html
 ## Project Structure
 ```
 ektor-pool-services/
-├── backend-v2/              # FastAPI backend
+├── backend/              # FastAPI backend
 │   ├── app/
 │   │   ├── api/            # API routes
 │   │   ├── core/           # Auth, security, config

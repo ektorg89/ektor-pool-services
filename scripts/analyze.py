@@ -199,7 +199,7 @@ if __name__ == "__main__":
 
     report = run_analysis()
 
-    output_dir = Path(__file__).parent.parent / "backend-v2"
+    output_dir = Path(__file__).parent.parent / "backend"
     output_dir.mkdir(exist_ok=True)
 
     json_path = output_dir / "analysis-report.json"

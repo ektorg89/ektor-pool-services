@@ -45,6 +45,12 @@ playwright-report/
 *.seed
 *.pid.lock
 
+# Claude Code internal files
+.claude/
+.claude-flow/
+.mcp.json
+.swarm/
+
 # Documentation builds
 docs/_build/
 

@@ -71,12 +71,41 @@ resource "aws_key_pair" "pool_key" {
   }
 }
 
+# ── IAM Role (allows EC2 to read SSM parameters) ─────────────
+resource "aws_iam_role" "pool_ec2_role" {
+  name = "${var.app_name}-ec2-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect    = "Allow"
+      Principal = { Service = "ec2.amazonaws.com" }
+      Action    = "sts:AssumeRole"
+    }]
+  })
+
+  tags = {
+    Project = var.app_name
+  }
+}
+
+resource "aws_iam_role_policy_attachment" "ssm_read" {
+  role       = aws_iam_role.pool_ec2_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess"
+}
+
+resource "aws_iam_instance_profile" "pool_ec2_profile" {
+  name = "${var.app_name}-ec2-profile"
+  role = aws_iam_role.pool_ec2_role.name
+}
+
 # ── EC2 Instance ──────────────────────────────────────────────
 resource "aws_instance" "pool_server" {
   ami                    = var.ami_id
   instance_type          = var.instance_type
   key_name               = aws_key_pair.pool_key.key_name
   vpc_security_group_ids = [aws_security_group.pool_api.id]
+  iam_instance_profile   = aws_iam_instance_profile.pool_ec2_profile.name
 
   tags = {
     Name    = "${var.app_name}-server"

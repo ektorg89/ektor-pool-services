@@ -12,7 +12,7 @@ spec:
       labels:
         app: pool-api
     spec:
-        containers:
+      containers:
         - name: api
           image: ghcr.io/ektorg89/ektor-pool-services/api:latest
           ports:
@@ -20,4 +20,24 @@ spec:
           envFrom:
             - secretRef:
                 name: pool-api-secrets
-
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 15
+            periodSeconds: 20
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            failureThreshold: 3

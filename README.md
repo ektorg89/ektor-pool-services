@@ -18,8 +18,53 @@
 
 A professional full-stack web application for managing a pool maintenance business. Built from the ground up with modern technologies, this system handles customer management, property tracking, invoicing, and payment processing.
 
-**Live Demo:** [Coming Soon]  
-**Portfolio Project:** Built as a comprehensive demonstration of full-stack development skills for internship applications.
+**Portfolio Project:** Built as a comprehensive demonstration of full-stack and DevOps skills for internship applications.
+
+---
+
+## Architecture
+
+```mermaid
+flowchart TD
+    Dev([Developer]) -->|git push to main| GH[GitHub]
+
+    subgraph CI ["GitHub Actions CI/CD (.github/workflows/ci.yml)"]
+        direction TB
+        J1[Job 1: Backend Tests\npytest + coverage\nMySQL service container]
+        J2[Job 2: Frontend Build\nnpm ci + npm run build]
+        J3[Job 3: Build & Push Image\ndocker buildx → ghcr.io]
+        J4[Job 4: Deploy to EC2\nSSH → docker compose up]
+
+        J1 --> J3
+        J2 --> J3
+        J3 --> J4
+    end
+
+    GH --> CI
+
+    subgraph GHCR ["GitHub Container Registry"]
+        IMG[ghcr.io/ektorg89/\nektor-pool-services/api:latest]
+    end
+
+    J3 -->|docker push| GHCR
+    J4 -->|docker pull| GHCR
+
+    subgraph AWS ["AWS EC2 t3.micro (us-east-1)"]
+        direction TB
+        API[FastAPI :8000]
+        DB[(MySQL 8.0 :3306)]
+        PROM[Prometheus :9090]
+        GRAF[Grafana :3000]
+
+        API -->|SQLAlchemy| DB
+        PROM -->|scrape /metrics| API
+        GRAF -->|query| PROM
+    end
+
+    J4 -->|SSH deploy| AWS
+
+    User([End User]) -->|HTTPS :443| API
+```
 
 ---
 
